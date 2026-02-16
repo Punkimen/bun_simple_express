@@ -1,20 +1,24 @@
 import { createApp } from './app';
-import { initRoutes } from './routes';
+import { initTransactionsRoutes } from './transactions/routes';
+import { initUsersRoutes } from './users/routes';
 import { AppError } from './utils/error';
 
 const app = createApp();
 
-app.use((req, res, next) => {
-  console.log('Middleware 1');
-  return next?.(req, res) || new Response();
+app.use(async (req, res, next) => {
+  console.log('middlewqr', { req });
+  return await next?.();
+});
+
+app.use(async (req, res, next) => {
+  console.log('middlewqr123', { req });
+  return await next?.();
 });
 
 app.use(async (req, res, next) => {
   try {
-    return await next?.(req, res);
+    return await next?.();
   } catch (error: any) {
-    console.error(error);
-
     let status = 500;
     let message = 'Internal Server Error';
 
@@ -32,7 +36,8 @@ app.use(async (req, res, next) => {
   }
 });
 
-initRoutes(app);
+initUsersRoutes(app);
+initTransactionsRoutes(app);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000 on http://localhost:3000');

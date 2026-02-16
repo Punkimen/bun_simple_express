@@ -3,8 +3,8 @@ type TUser = {
   name: string;
 };
 // удобная манипуляция транзакциями
-type Transaction = {
-  id: string;
+export type TTransaction = {
+  id: number;
   userId: number;
   date: string; // ISO
   categoryId: string;
@@ -13,7 +13,7 @@ type Transaction = {
   note?: string;
 };
 // сортировка по категориям
-type Category = {
+export type TCategory = {
   id: string;
   name: string;
   type: 'income' | 'expense';
