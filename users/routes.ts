@@ -7,8 +7,8 @@ export const initUsersRoutes = (app: AppMethods) => {
     return userController.getUsers();
   });
 
-  app.methodPost<{ name: string }>('/createUser', (req) => {
-    return userController.createUser(req.body.name);
+  app.methodGet<{ name: string }>('/createUser', (req) => {
+    return userController.createUser('Max');
   });
 
   app.methodDelete('/deleteUsers', () => {

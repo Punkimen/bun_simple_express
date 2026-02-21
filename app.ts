@@ -2,7 +2,7 @@ import type { BunRequest } from 'bun';
 
 type TMethods = 'GET' | 'POST' | 'DELETE' | 'PUT';
 type TMethodsCallbacks<T = any> = (
-  req: BunRequest & { body: T },
+  req: Omit<BunRequest, 'json'> & { json: () => Promise<T> },
   res?: Response,
 ) => any;
 type BunRoutes = Record<string, any>;
@@ -34,7 +34,10 @@ export const createApp = (): AppMethods => {
     });
   };
 
-  const executeMiddleware = async (req: BunRequest): Promise<void> => {
+  const executeMiddleware = async (
+    req: BunRequest,
+    res: Response,
+  ): Promise<void> => {
     if (!middleware.length) return;
 
     let index = 0;
@@ -42,16 +45,16 @@ export const createApp = (): AppMethods => {
       const mw = middleware[index];
       index++;
       if (mw) {
-        await mw(req, undefined, next);
+        await mw(req, res, next);
       }
     };
     await next();
   };
 
   const wrapWithMiddleware = (cb: TMethodsCallbacks) => {
-    return async (req: BunRequest) => {
-      await executeMiddleware(req);
-      const result = await cb(req);
+    return async (req: BunRequest, res: Response) => {
+      await executeMiddleware(req, res);
+      const result = await cb(req, res);
       return wrapResponse(result);
     };
   };
@@ -111,11 +114,10 @@ export const createApp = (): AppMethods => {
     const server = Bun.serve({
       port,
       routes,
-      fetch(req) {
+      fetch() {
         return new Response('Not Found', { status: 404 });
       },
     });
-
     console.log(`Server running at ${server.url}`);
     callback?.();
   };

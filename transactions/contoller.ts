@@ -35,6 +35,11 @@ class Transaction {
       ...data,
     };
 
+    console.log({ newTransaction });
+    console.log(
+      `INSERT INTO transactions (id, user_id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.userId}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`,
+    );
+
     try {
       const transaction =
         await db`INSERT INTO transactions (id, user_id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.userId}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;

@@ -9,8 +9,9 @@ export const initTransactionsRoutes = (app: AppMethods) => {
       type: 'expense',
     });
   });
-  app.methodPost<Omit<TTransaction, 'id'>>('/transaction', (req) => {
-    const newTransaction = req.body;
+
+  app.methodPost<Omit<TTransaction, 'id'>>('/transaction', async (req) => {
+    const newTransaction = await req.json();
     return transactionController.createTransaction(newTransaction);
   });
 };

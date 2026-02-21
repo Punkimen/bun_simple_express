@@ -6,12 +6,10 @@ import { AppError } from './utils/error';
 const app = createApp();
 
 app.use(async (req, res, next) => {
-  console.log('middlewqr', { req });
   return await next?.();
 });
 
 app.use(async (req, res, next) => {
-  console.log('middlewqr123', { req });
   return await next?.();
 });
 
