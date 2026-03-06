@@ -1,0 +1,9 @@
+<% if (!data || data.length===0) { %>
+  <option disabled selected>Нет категорий</option>
+  <% } else { %>
+    <% data.forEach((item)=> { %>
+      <option value="<%= item.id %>">
+        <%= item.name %>
+      </option>
+      <% }) %>
+        <% } %>

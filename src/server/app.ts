@@ -1,4 +1,8 @@
 import type { BunRequest } from "bun";
+import { AppError } from "./utils/error";
+import { join } from "path";
+
+const baseDir = import.meta.dir;
 
 type TMethods = "GET" | "POST" | "DELETE" | "PUT";
 type TMethodsCallbacks<T = any> = (
@@ -6,7 +10,8 @@ type TMethodsCallbacks<T = any> = (
   res?: Response,
 ) => any;
 type BunRoutes = Record<string, any>;
-type MiddlewareCallback = (
+
+export type MiddlewareCallback = (
   req: BunRequest,
   res?: Response,
   next?: () => Promise<Response | null | undefined>,
@@ -19,7 +24,7 @@ export interface AppMethods {
   methodPut: <T = any>(path: string, cb: TMethodsCallbacks<T>) => void;
   methodHtml: (
     path: string,
-    cb: (req: BunRequest, res?: Response) => Promise<string>,
+    cb: (req: BunRequest, res?: Response) => Promise<string> | string,
   ) => void;
   use: (cb: MiddlewareCallback) => void;
   listen: (port: number, callback?: () => void) => void;
@@ -40,7 +45,7 @@ export const createApp = (): AppMethods => {
 
   const htmlWrap = (html: string): Response => {
     return new Response(html, {
-      headers: { "Content-Type": "text/html" },
+      headers: { "Content-Type": "text/html; charset=utf-8" },
     });
   };
 
@@ -71,15 +76,34 @@ export const createApp = (): AppMethods => {
 
     return dispatch(0);
   };
+
   const wrapWithMiddleware = (cb: TMethodsCallbacks) => {
     return async (req: BunRequest, res: Response) => {
-      const mwResult = await executeMiddleware(req, res);
-      if (mwResult) {
-        return mwResult;
-      }
+      try {
+        const mwResult = await executeMiddleware(req, res);
 
-      const result = await cb(req, res);
-      return wrapResponse(result);
+        if (mwResult) {
+          return mwResult;
+        }
+
+        const result = await cb(req, res);
+        return wrapResponse(result);
+      } catch (error) {
+        let status = 500;
+        let message = "Internal Server Error";
+
+        if (error instanceof AppError) {
+          status = error.status;
+          message = error.message;
+        } else if (error instanceof Error) {
+          message = error.message;
+        }
+
+        return new Response(JSON.stringify({ error: message }), {
+          status,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
     };
   };
 
@@ -132,7 +156,7 @@ export const createApp = (): AppMethods => {
 
   const methodHtml = (
     path: string,
-    cb: (req: BunRequest, res?: Response) => Promise<string>,
+    cb: (req: BunRequest, res?: Response) => Promise<string> | string,
   ) => {
     createMethodHandler(path, "GET", async (req, res) => {
       const html = await cb(req, res);
@@ -148,10 +172,35 @@ export const createApp = (): AppMethods => {
     const server = Bun.serve({
       port,
       routes,
-      fetch() {
-        return new Response("Not Found", { status: 404 });
+      async fetch(req) {
+        const url = new URL(req.url);
+        const path = url.pathname;
+
+        if (!path.startsWith("/public")) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: "/login",
+            },
+          });
+        }
+
+        try {
+          const fileUrl = join(baseDir, `../client${path}`);
+          const file = Bun.file(fileUrl);
+
+          if (!(await file.exists())) {
+            return new Response("Not Found", { status: 404 });
+          }
+
+          return new Response(file);
+        } catch (e) {
+          console.error("Static middleware error:", e);
+          return new Response("Internal Server Error", { status: 500 });
+        }
       },
     });
+
     callback?.();
   };
 

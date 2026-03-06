@@ -1,17 +1,13 @@
-import db from '../db/db';
-import { AppError } from '../utils/error';
+import db from "../../db/db";
+import { AppError, BadRequestError } from "../../utils/error";
 
 class Users {
   async createUser(name: string) {
-    console.log(
-      'example',
-      `INSERT INTO users (name) VALUES (${name}) RETURNING *`,
-    );
     try {
       const newUser =
         await db`INSERT INTO users (name) VALUES (${name}) RETURNING *`;
       if (!newUser[0]) {
-        throw new AppError('Failed to create user', 500);
+        throw new AppError("Failed to create user", 500);
       }
 
       return newUser;
@@ -28,11 +24,15 @@ class Users {
     }
   }
 
-  async getUserById(id: string) {
+  async getUserById(id?: string) {
+    if (!id) {
+      throw new BadRequestError("Id is not provide");
+    }
+
     try {
       const user = await db`SELECT * FROM users WHERE id = ${id}`;
       if (!user[0]) {
-        throw new AppError('User not found', 404);
+        throw new AppError("User not found", 404);
       }
       return user[0];
     } catch (error: any) {

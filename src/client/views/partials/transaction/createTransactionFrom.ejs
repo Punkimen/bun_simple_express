@@ -1,0 +1,61 @@
+<div class="transaction">
+  <h2>Создать транзакцию</h2>
+
+  <form
+    class="transaction-form"
+    hx-post="/api/transaction"
+    hx-swap="none"
+    hx-ext="json-enc"
+    hx-on:htmx:after-request="if(event.detail.successful && event.detail.elt === this) { this.reset(); document.dispatchEvent(new CustomEvent('transaction-modal-close')) }"
+  >
+    <div class="form-group">
+      <label>Дата</label>
+      <input type="date" name="date" required
+        min="<%= new Date().toISOString().split('T')[0] %>"
+        value="<%= new Date().toISOString().split('T')[0] %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Тип</label>
+      <select name="type" id="type-select">
+        <option value="expense">Расход</option>
+        <option value="income">Доход</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <div class="form-group-header">
+        <label>Категория</label>
+        <button type="button" class="btn-link" data-open-modal="category">+ Создать</button>
+      </div>
+
+      <select name="categoryId" id="category-select"
+        hx-get="/api/renderOptions"
+        hx-trigger="change from:#type-select, categoryChanged from:body"
+        hx-target="#category-select"
+        hx-include="#type-select"
+        hx-swap="innerHTML">
+        <option>Загрузка...</option>
+      </select>
+
+      <div id="category-list"
+           hx-get="/api/renderCategoryList"
+           hx-trigger="change from:#type-select, categoryChanged from:body"
+           hx-include="#type-select"
+           hx-swap="innerHTML">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Сумма</label>
+      <input type="number" name="amount" required />
+    </div>
+
+    <div class="form-group">
+      <label>Заметка</label>
+      <input type="text" name="note" />
+    </div>
+
+    <button class="btn">Создать</button>
+  </form>
+</div>

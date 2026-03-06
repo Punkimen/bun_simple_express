@@ -1,0 +1,88 @@
+<%
+  const months = [
+    [1,'Январь'],[2,'Февраль'],[3,'Март'],[4,'Апрель'],
+    [5,'Май'],[6,'Июнь'],[7,'Июль'],[8,'Август'],
+    [9,'Сентябрь'],[10,'Октябрь'],[11,'Ноябрь'],[12,'Декабрь']
+  ];
+  const hasFilters = filters.year || filters.month || filters.categories.length > 0;
+  const activeCatCount = filters.categories.length;
+  const incomeCategories  = allCategories.filter(c => c.type === 'income');
+  const expenseCategories = allCategories.filter(c => c.type === 'expense');
+%>
+
+<form id="transaction-filters" class="filters-bar">
+
+  <div class="filter-group">
+    <label class="filter-label">Год</label>
+    <select id="year-filter" name="year" class="filter-select"
+            hx-get="/api/renderTransactions"
+            hx-target="#transactions-container"
+            hx-swap="innerHTML"
+            hx-include="#transaction-filters"
+            hx-trigger="change delay:200ms">
+      <option value="">Все</option>
+      <% years.forEach(y => { %>
+        <option value="<%= y %>" <%= filters.year == y ? 'selected' : '' %>><%= y %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label class="filter-label">Месяц</label>
+    <select id="month-filter" name="month" class="filter-select"
+            hx-get="/api/renderTransactions"
+            hx-target="#transactions-container"
+            hx-swap="innerHTML"
+            hx-include="#transaction-filters"
+            hx-trigger="change delay:200ms">
+      <option value="">Все</option>
+      <% months.forEach(([val, label]) => { %>
+        <option value="<%= val %>" <%= filters.month == val ? 'selected' : '' %>><%= label %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group filter-group-categories">
+    <label class="filter-label">Категории</label>
+    <button type="button"
+            class="filter-categories-btn <%= activeCatCount > 0 ? 'has-active' : '' %>"
+            data-toggle="categories-panel">
+      <%= activeCatCount > 0 ? `Выбрано: ${activeCatCount}` : 'Все' %> ▾
+    </button>
+
+    <div id="categories-panel" class="categories-panel" style="display:none">
+      <% if (allCategories.length === 0) { %>
+        <span class="categories-empty">Нет категорий</span>
+      <% } else { %>
+        <% if (incomeCategories.length > 0) { %>
+          <div class="categories-group-label income">Доходы</div>
+          <% incomeCategories.forEach(cat => { %>
+            <label class="category-checkbox-label">
+              <input type="checkbox" name="categories" value="<%= cat.id %>"
+                <%= filters.categories.includes(cat.id) ? 'checked' : '' %>>
+              <span><%= cat.name %></span>
+            </label>
+          <% }) %>
+        <% } %>
+        <% if (expenseCategories.length > 0) { %>
+          <div class="categories-group-label expense">Расходы</div>
+          <% expenseCategories.forEach(cat => { %>
+            <label class="category-checkbox-label">
+              <input type="checkbox" name="categories" value="<%= cat.id %>"
+                <%= filters.categories.includes(cat.id) ? 'checked' : '' %>>
+              <span><%= cat.name %></span>
+            </label>
+          <% }) %>
+        <% } %>
+        <div class="categories-panel-footer">
+          <button type="button" class="btn-inline" data-apply-categories>Применить</button>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (hasFilters) { %>
+    <button type="button" class="btn-reset-filters" data-reset-filters>Сбросить</button>
+  <% } %>
+
+</form>
