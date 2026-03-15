@@ -1,0 +1,4 @@
+<form>
+  <input name="login" placeholder="login" />
+  <input name="password" placeholder="password" />
+</form>

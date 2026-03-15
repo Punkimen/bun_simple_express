@@ -4,10 +4,9 @@ import { AppError } from "../../utils/error";
 import { v4 as uuidv4 } from "uuid";
 
 class Categories {
-  async getAllUsersCategories(userId: number) {
+  async getAllCategories() {
     try {
-      const categories =
-        await db`SELECT * FROM categories WHERE user_id = ${userId}`;
+      const categories = await db`SELECT * FROM categories`;
 
       return categories;
     } catch (error: any) {

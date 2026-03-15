@@ -1,18 +1,22 @@
-import { CookieMap } from "bun";
 import { createApp } from "./app";
 import { initTransactionsRoutes } from "./modules/transactions/routes";
 import { initUsersRoutes } from "./modules/users/routes";
 import { AppError, UnauthorizedError } from "./utils/error";
 import type { AdminLogin } from "./types/common.type";
+import { initCategoryRoutes } from "./modules/category/routes";
+import { Eta } from "eta";
+import path from "node:path";
 
+const eta = new Eta({ views: path.join(import.meta.dirname, "views") });
 const app = createApp();
 
 app.use(async (req, res, next) => {
   const cookies = req.cookies;
   const url = new URL(req.url);
   const path = url.pathname;
-  console.log({ url }, { path });
-  if (!cookies.get("auth") && path !== "login") {
+  const key = cookies.get("auth");
+
+  if (key !== process.env.AUTH_COOKIE_KEY && path !== "/login") {
     throw new UnauthorizedError();
   }
 
@@ -20,6 +24,8 @@ app.use(async (req, res, next) => {
 });
 
 app.use(async (req, res, next) => {
+  console.log({});
+
   try {
     return await next?.();
   } catch (error: any) {
@@ -42,21 +48,33 @@ app.use(async (req, res, next) => {
 
 initUsersRoutes(app);
 initTransactionsRoutes(app);
+initCategoryRoutes(app);
 
-app.methodPost<AdminLogin>("/login", async (req, res) => {
+app.methodPost<AdminLogin>("/api/login", async (req, res) => {
   const cookies = req.cookies;
   const body = await req.json();
-  console.log({ body }, process.env.ADMIN_LOGIN);
+
   if (
     body.login === process.env.ADMIN_LOGIN &&
-    body.password === process.env.PASSWORD
+    body.password === process.env.ADMIN_PASSWORD
   ) {
-    cookies.set("auth", "11123", { httpOnly: true, path: "/" });
+    cookies.set("auth", process.env.AUTH_COOKIE_KEY || "", {
+      httpOnly: true,
+      path: "/",
+    });
   } else {
     throw new UnauthorizedError();
   }
 
   return;
+});
+
+app.methodHtml("/login", async (req, res) => {
+  const body = await eta.render("./pages/login.eta", {});
+  return await eta.render("./layout.eta", {
+    title: "Login",
+    body,
+  });
 });
 
 app.listen(3000, () => {

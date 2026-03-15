@@ -4,26 +4,6 @@ import { AppError, BadRequestError } from "../../utils/error";
 import { v4 as uuidv4 } from "uuid";
 
 class Transaction {
-  async createCategory(data: Omit<TCategory, "id">) {
-    const newCategory = {
-      id: uuidv4(),
-      ...data,
-    };
-
-    try {
-      const category =
-        await db`INSERT INTO categories (id, name, type) VALUES (${newCategory.id}, ${newCategory.name}, ${newCategory.type})  RETURNING *`;
-
-      if (!category[0]) {
-        throw new AppError("Failed to create category");
-      }
-
-      return category[0];
-    } catch (error: any) {
-      throw new AppError(error.message || "Failed to create category");
-    }
-  }
-
   async getTransaction() {
     try {
       const transactions = await db`SELECT * FROM transactions`;
@@ -46,7 +26,7 @@ class Transaction {
 
     try {
       const transaction =
-        await db`INSERT INTO transactions (id, user_id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.userId}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;
+        await db`INSERT INTO transactions (id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;
 
       if (!transaction[0]) {
         throw new AppError("Failed to create transaction");
@@ -75,7 +55,6 @@ class Transaction {
     try {
       const existingTransaction =
         await db`SELECT * FROM transactions WHERE id = ${id}`;
-      console.log({ existingTransaction });
       if (!existingTransaction[0]) {
         throw new AppError("Transaction not found");
       }
@@ -84,7 +63,7 @@ class Transaction {
         ...existingTransaction[0],
         ...data,
       };
-      console.log({ updatedTransaction });
+
       const result =
         await db`UPDATE transactions SET category_id = ${updatedTransaction.categoryId}, amount = ${updatedTransaction.amount}, note = ${updatedTransaction.note} WHERE id = ${id} RETURNING *`;
 
