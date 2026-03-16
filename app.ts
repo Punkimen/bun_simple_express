@@ -38,7 +38,7 @@ export const createApp = (): AppMethods => {
     });
   };
 
-  const htmlWrap = (html): Response => {
+  const htmlWrap = (html: string): Response => {
     console.log("Wrapping HTML response");
     return new Response(html, {
       headers: { "Content-Type": "text/html" },

@@ -16,7 +16,11 @@ app.use(async (req, res, next) => {
   const path = url.pathname;
   const key = cookies.get("auth");
 
-  if (key !== process.env.AUTH_COOKIE_KEY && path !== "/login") {
+  if (
+    key !== process.env.AUTH_COOKIE_KEY &&
+    path !== "/api/login" &&
+    path !== "/login"
+  ) {
     throw new UnauthorizedError();
   }
 
@@ -24,8 +28,6 @@ app.use(async (req, res, next) => {
 });
 
 app.use(async (req, res, next) => {
-  console.log({});
-
   try {
     return await next?.();
   } catch (error: any) {
@@ -50,29 +52,42 @@ initUsersRoutes(app);
 initTransactionsRoutes(app);
 initCategoryRoutes(app);
 
-app.methodPost<AdminLogin>("/api/login", async (req, res) => {
+app.methodPost("/api/login", async (req, res) => {
   const cookies = req.cookies;
-  const body = await req.json();
+  const body = await req.formData();
+  const login = body.get("login");
+  const password = body.get("password");
 
   if (
-    body.login === process.env.ADMIN_LOGIN &&
-    body.password === process.env.ADMIN_PASSWORD
+    login === process.env.ADMIN_LOGIN &&
+    password === process.env.ADMIN_PASSWORD
   ) {
     cookies.set("auth", process.env.AUTH_COOKIE_KEY || "", {
       httpOnly: true,
       path: "/",
     });
+    return new Response(null, {
+      headers: {
+        "HX-Redirect": "/home",
+      },
+    });
   } else {
     throw new UnauthorizedError();
   }
-
-  return;
 });
 
 app.methodHtml("/login", async (req, res) => {
   const body = await eta.render("./pages/login.eta", {});
   return await eta.render("./layout.eta", {
     title: "Login",
+    body,
+  });
+});
+
+app.methodHtml("/home", async (req, res) => {
+  const body = await eta.render("./pages/home.eta", {});
+  return await eta.render("./layout.eta", {
+    title: "Home",
     body,
   });
 });
