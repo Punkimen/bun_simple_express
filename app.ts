@@ -9,7 +9,7 @@ type BunRoutes = Record<string, any>;
 type MiddlewareCallback = (
   req: BunRequest,
   res?: Response,
-  next?: () => Promise<void>,
+  next?: () => Promise<Response | null | undefined>,
 ) => any;
 
 export interface AppMethods {
@@ -48,23 +48,40 @@ export const createApp = (): AppMethods => {
   const executeMiddleware = async (
     req: BunRequest,
     res: Response,
-  ): Promise<void> => {
-    if (!middleware.length) return;
+  ): Promise<Response | null> => {
+    let index = -1;
 
-    let index = 0;
-    const next = async () => {
-      const mw = middleware[index];
-      index++;
-      if (mw) {
-        await mw(req, res, next);
+    const dispatch = async (i: number): Promise<Response | null> => {
+      if (i <= index) {
+        throw new Error("next() called multiple times");
       }
+
+      index = i;
+
+      const mw = middleware[i];
+      if (!mw) return null;
+
+      const result = await mw(req, res, () => dispatch(i + 1));
+
+      if (result instanceof Response) {
+        console.log("Middleware returned Response", result);
+        return result;
+      }
+
+      return null;
     };
-    await next();
-  };
+
+    return dispatch(0);
 
   const wrapWithMiddleware = (cb: TMethodsCallbacks) => {
     return async (req: BunRequest, res: Response) => {
-      await executeMiddleware(req, res);
+      const mwResult = await executeMiddleware(req, res);
+      console.log({ mwResult });
+      if (mwResult) {
+        console.log("retrun mwResult", { mwResult });
+        return mwResult;
+      }
+
       const result = await cb(req, res);
       return wrapResponse(result);
     };

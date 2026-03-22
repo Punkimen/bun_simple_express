@@ -6,28 +6,61 @@ import type { AdminLogin } from "./types/common.type";
 import { initCategoryRoutes } from "./modules/category/routes";
 import { Eta } from "eta";
 import path from "node:path";
+import { authController } from "./utils/isAuth";
 
 const eta = new Eta({ views: path.join(import.meta.dirname, "views") });
 const app = createApp();
 
 app.use(async (req, res, next) => {
-  const cookies = req.cookies;
   const url = new URL(req.url);
   const path = url.pathname;
-  const key = cookies.get("auth");
+ console.log('middleware 1')
+  const isAuth = authController.isAuth(req);
+  console.log({ isAuth });
+  const isPublicRoute =
+    path === "/login" || path === "/api/login" || path.startsWith("/public");
 
-  if (
-    key !== process.env.AUTH_COOKIE_KEY &&
-    path !== "/api/login" &&
-    path !== "/login"
-  ) {
-    throw new UnauthorizedError();
+  if (!isAuth && !isPublicRoute) {
+    if (path.startsWith("/api")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/login",
+      },
+    });
+  }
+
+  if (isAuth && path === "/login") {
+    console.log("Redirecting authenticated user from /login to /home");
+    const isHx = req.headers.get("HX-Request") === "true";
+
+    if (isHx) {
+      return new Response(null, {
+        status: 200,
+        headers: {
+          "HX-Redirect": "/home",
+        },
+      });
+    }
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/home",
+      },
+    });
   }
 
   return await next?.();
 });
 
 app.use(async (req, res, next) => {
+  console.log('middleware 2')
   try {
     return await next?.();
   } catch (error: any) {
@@ -76,11 +109,17 @@ app.methodPost("/api/login", async (req, res) => {
   }
 });
 
-app.methodHtml("/login", async (req, res) => {
-  const body = await eta.render("./pages/login.eta", {});
-  return await eta.render("./layout.eta", {
+app.methodGet("/login", async (req, res) => {
+  const body = eta.render("./pages/login.eta", {});
+  const html = await eta.render("./layout.eta", {
     title: "Login",
     body,
+  });
+
+  return new Response(html, {
+    headers: {
+      "Content-Type": "text/html",
+    },
   });
 });
 
