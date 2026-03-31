@@ -6,13 +6,11 @@ class Auth {
     const key = cookies.get("auth");
     const path = new URL(req.url).pathname;
 
-    if (
-      key !== process.env.AUTH_COOKIE_KEY &&
-      path !== "/api/login" &&
-      path !== "/login"
-    ) {
+    console.log({ path });
+    if (key !== process.env.AUTH_COOKIE_KEY) {
       return false;
     }
+
     return true;
   }
 }

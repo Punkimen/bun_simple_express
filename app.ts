@@ -72,7 +72,7 @@ export const createApp = (): AppMethods => {
     };
 
     return dispatch(0);
-
+  };
   const wrapWithMiddleware = (cb: TMethodsCallbacks) => {
     return async (req: BunRequest, res: Response) => {
       const mwResult = await executeMiddleware(req, res);
