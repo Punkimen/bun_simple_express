@@ -1,9 +1,0 @@
-<div>
-  <h1>Login</h1>
-  <form id="login-form" hx-post="/api/login" hx-target="#login-form">
-    <input value="CrazyFamily" name="login" placeholder="login" />
-    <input value="CRAZY041216" name="password" type="password" placeholder="password" />
-
-    <button type="submit">Login</button>
-  </form>
-</div>
