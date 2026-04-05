@@ -6,7 +6,7 @@ type TMethodsCallbacks<T = any> = (
   res?: Response,
 ) => any;
 type BunRoutes = Record<string, any>;
-type MiddlewareCallback = (
+export type MiddlewareCallback = (
   req: BunRequest,
   res?: Response,
   next?: () => Promise<Response | null | undefined>,

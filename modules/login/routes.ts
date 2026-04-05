@@ -1,18 +1,13 @@
 import type { AppMethods } from "../../app";
-import { eta } from "../../utils/eta";
+import { loginController } from "./controller";
 
 export const initLoginRoutes = (app: AppMethods) => {
-  app.methodGet("/login", async (req, res) => {
-    const body = eta.render("./pages/login.eta", {});
-    const html = await eta.render("./layout.eta", {
-      title: "Login",
-      body,
-    });
+  app.methodPost("/api/login", async (req, res) => {
+    const cookies = req.cookies;
+    const body = await req.formData();
+    const login = body.get("login");
+    const password = body.get("password");
 
-    return new Response(html, {
-      headers: {
-        "Content-Type": "text/html",
-      },
-    });
+    loginController.login(cookies, login, password);
   });
 };
