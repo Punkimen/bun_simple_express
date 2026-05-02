@@ -1,0 +1,13 @@
+<% if (data && data.length > 0) { %>
+  <div class="category-pills">
+    <% data.forEach(cat => { %>
+      <span class="category-pill">
+        <span class="category-pill-name"><%= cat.name %></span>
+        <button type="button" class="category-pill-delete"
+                hx-delete="/api/category/<%= cat.id %>"
+                hx-swap="none"
+                hx-confirm="Удалить категорию «<%= cat.name %>»?">✕</button>
+      </span>
+    <% }) %>
+  </div>
+<% } %>

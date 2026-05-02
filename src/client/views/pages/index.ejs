@@ -1,0 +1,12 @@
+<%- include('../partials/modals/transactionModal.ejs') %> <%-
+include('../partials/modals/categoryModal.ejs') %>
+
+<div class="page-wrapper">
+  <div
+    id="transactions-container"
+    hx-get="/api/renderTransactions"
+    hx-trigger="load, transactionCreated from:body"
+    hx-target="this"
+    hx-swap="innerHTML"
+  ></div>
+</div>

@@ -1,0 +1,26 @@
+<div class="container">
+  <h1>Создать категорию</h1>
+
+  <form class="form" hx-post="/api/category" hx-trigger="submit" hx-ext="json-enc" hx-swap="none"
+    hx-on:htmx:after-request="if(event.detail.successful) { this.reset(); document.dispatchEvent(new CustomEvent('category-modal-close')) }">
+    <!-- Название -->
+    <div class="form-group">
+      <label for="name">Название</label>
+      <input type="text" id="name" name="name" required placeholder="Например: Зарплата">
+    </div>
+
+    <!-- Тип -->
+    <div class="form-group">
+      <label for="type">Тип</label>
+      <select id="category-type-select" name="type" required>
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn">
+      Создать
+    </button>
+  </form>
+
+</div>

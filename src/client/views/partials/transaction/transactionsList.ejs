@@ -1,0 +1,108 @@
+<%
+  const income  = (data || []).filter(t => t.type === 'income');
+  const expense = (data || []).filter(t => t.type === 'expense');
+  const incomeTotal  = income.reduce((s, t)  => s + parseFloat(t.amount), 0);
+  const expenseTotal = expense.reduce((s, t) => s + parseFloat(t.amount), 0);
+
+  function fmtDate(d) {
+    return new Date(d).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  function fmtAmount(n) {
+    return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  }
+%>
+
+<%- include('./transactionFilters.ejs') %>
+
+<div class="tables-grid">
+
+  <div class="table-card income">
+    <div class="table-head">
+      <span class="table-title">Доходы</span>
+      <div class="table-head-right">
+        <span class="table-total">+ <%= fmtAmount(incomeTotal) %></span>
+        <button class="btn-table-add" data-open-modal="transaction" data-type="income">
+          + Добавить
+        </button>
+      </div>
+    </div>
+    <% if (income.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        Нет доходов
+      </div>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Категория</th>
+            <th>Заметка</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% income.forEach(t => { %>
+            <tr>
+              <td class="col-date"><%= fmtDate(t.date) %></td>
+              <td class="col-amount"><%= fmtAmount(t.amount) %></td>
+              <td class="col-cat"><%= t.category_name || '—' %></td>
+              <td class="col-note"><%= t.note || '—' %></td>
+              <td class="col-action">
+                <button class="btn-delete" hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
+                  hx-confirm="Удалить транзакцию?">✕</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <div class="table-card expense">
+    <div class="table-head">
+      <span class="table-title">Расходы</span>
+      <div class="table-head-right">
+        <span class="table-total">− <%= fmtAmount(expenseTotal) %></span>
+        <button class="btn-table-add" data-open-modal="transaction" data-type="expense">
+          + Добавить
+        </button>
+      </div>
+    </div>
+    <% if (expense.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        Нет расходов
+      </div>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Категория</th>
+            <th>Заметка</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% expense.forEach(t => { %>
+            <tr>
+              <td class="col-date"><%= fmtDate(t.date) %></td>
+              <td class="col-amount"><%= fmtAmount(t.amount) %></td>
+              <td class="col-cat"><%= t.category_name || '—' %></td>
+              <td class="col-note"><%= t.note || '—' %></td>
+              <td class="col-action">
+                <button class="btn-delete" hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
+                  hx-confirm="Удалить транзакцию?">✕</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+</div>

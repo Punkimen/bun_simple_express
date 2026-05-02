@@ -4,9 +4,13 @@ class Auth {
   isAuth(req: BunRequest) {
     const cookies = req.cookies;
     const key = cookies.get("auth");
+<<<<<<< HEAD:src/server/utils/isAuth.ts
+
+=======
     const path = new URL(req.url).pathname;
 
     console.log({ path });
+>>>>>>> main:utils/isAuth.ts
     if (key !== process.env.AUTH_COOKIE_KEY) {
       return false;
     }
