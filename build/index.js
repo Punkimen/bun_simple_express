@@ -12,121 +12,54 @@ var __toESMCache_esm;
 var __toESM = (mod, isNodeMode, target) => {
   var canCache = mod != null && typeof mod === "object";
   if (canCache) {
-    var cache = isNodeMode
-      ? (__toESMCache_node ??= new WeakMap())
-      : (__toESMCache_esm ??= new WeakMap());
+    var cache = isNodeMode ? __toESMCache_node ??= new WeakMap : __toESMCache_esm ??= new WeakMap;
     var cached = cache.get(mod);
-    if (cached) return cached;
+    if (cached)
+      return cached;
   }
   target = mod != null ? __create(__getProtoOf(mod)) : {};
-  const to =
-    isNodeMode || !mod || !mod.__esModule
-      ? __defProp(target, "default", { value: mod, enumerable: true })
-      : target;
+  const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
   for (let key of __getOwnPropNames(mod))
     if (!__hasOwnProp.call(to, key))
       __defProp(to, key, {
         get: __accessProp.bind(mod, key),
-        enumerable: true,
+        enumerable: true
       });
-  if (canCache) cache.set(mod, to);
+  if (canCache)
+    cache.set(mod, to);
   return to;
 };
-var __commonJS = (cb, mod) => () => (
-  mod || cb((mod = { exports: {} }).exports, mod),
-  mod.exports
-);
+var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+var __returnValue = (v) => v;
+function __exportSetter(name, newValue) {
+  this[name] = __returnValue.bind(null, newValue);
+}
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, {
+      get: all[name],
+      enumerable: true,
+      configurable: true,
+      set: __exportSetter.bind(all, name)
+    });
+};
 var __require = import.meta.require;
 
-// node_modules/.pnpm/dotenv@17.3.1/node_modules/dotenv/package.json
-var require_package = __commonJS((exports, module) => {
-  module.exports = {
-    name: "dotenv",
-    version: "17.3.1",
-    description: "Loads environment variables from .env file",
-    main: "lib/main.js",
-    types: "lib/main.d.ts",
-    exports: {
-      ".": {
-        types: "./lib/main.d.ts",
-        require: "./lib/main.js",
-        default: "./lib/main.js",
-      },
-      "./config": "./config.js",
-      "./config.js": "./config.js",
-      "./lib/env-options": "./lib/env-options.js",
-      "./lib/env-options.js": "./lib/env-options.js",
-      "./lib/cli-options": "./lib/cli-options.js",
-      "./lib/cli-options.js": "./lib/cli-options.js",
-      "./package.json": "./package.json",
-    },
-    scripts: {
-      "dts-check": "tsc --project tests/types/tsconfig.json",
-      lint: "standard",
-      pretest: "npm run lint && npm run dts-check",
-      test: "tap run tests/**/*.js --allow-empty-coverage --disable-coverage --timeout=60000",
-      "test:coverage":
-        "tap run tests/**/*.js --show-full-coverage --timeout=60000 --coverage-report=text --coverage-report=lcov",
-      prerelease: "npm test",
-      release: "standard-version",
-    },
-    repository: {
-      type: "git",
-      url: "git://github.com/motdotla/dotenv.git",
-    },
-    homepage: "https://github.com/motdotla/dotenv#readme",
-    funding: "https://dotenvx.com",
-    keywords: [
-      "dotenv",
-      "env",
-      ".env",
-      "environment",
-      "variables",
-      "config",
-      "settings",
-    ],
-    readmeFilename: "README.md",
-    license: "BSD-2-Clause",
-    devDependencies: {
-      "@types/node": "^18.11.3",
-      decache: "^4.6.2",
-      sinon: "^14.0.1",
-      standard: "^17.0.0",
-      "standard-version": "^9.5.0",
-      tap: "^19.2.0",
-      typescript: "^4.8.4",
-    },
-    engines: {
-      node: ">=12",
-    },
-    browser: {
-      fs: false,
-    },
-  };
-});
-
-// node_modules/.pnpm/dotenv@17.3.1/node_modules/dotenv/lib/main.js
+// node_modules/dotenv/lib/main.js
 var require_main = __commonJS((exports, module) => {
   var fs = __require("fs");
   var path = __require("path");
   var os = __require("os");
   var crypto = __require("crypto");
-  var packageJson = require_package();
-  var version = packageJson.version;
   var TIPS = [
-    "\uD83D\uDD10 encrypt with Dotenvx: https://dotenvx.com",
-    "\uD83D\uDD10 prevent committing .env to code: https://dotenvx.com/precommit",
-    "\uD83D\uDD10 prevent building .env in docker: https://dotenvx.com/prebuild",
-    "\uD83E\uDD16 agentic secret storage: https://dotenvx.com/as2",
-    "\u26A1\uFE0F secrets for agents: https://dotenvx.com/as2",
-    "\uD83D\uDEE1\uFE0F auth for agents: https://vestauth.com",
-    "\uD83D\uDEE0\uFE0F  run anywhere with `dotenvx run -- yourcommand`",
-    "\u2699\uFE0F  specify custom .env file path with { path: '/custom/path/.env' }",
-    "\u2699\uFE0F  enable debug logging with { debug: true }",
-    "\u2699\uFE0F  override existing env vars with { override: true }",
-    "\u2699\uFE0F  suppress all logs with { quiet: true }",
-    "\u2699\uFE0F  write to custom object with { processEnv: myObject }",
-    "\u2699\uFE0F  load multiple .env files with { path: ['.env.local', '.env'] }",
+    "\u25C8 encrypted .env [www.dotenvx.com]",
+    "\u25C8 secrets for agents [www.dotenvx.com]",
+    "\u2301 auth for agents [www.vestauth.com]",
+    "\u2318 custom filepath { path: '/custom/path/.env' }",
+    "\u2318 enable debugging { debug: true }",
+    "\u2318 override existing { override: true }",
+    "\u2318 suppress logs { quiet: true }",
+    "\u2318 multiple files { path: ['.env.local', '.env'] }"
   ];
   function _getRandomTip() {
     return TIPS[Math.floor(Math.random() * TIPS.length)];
@@ -143,29 +76,22 @@ var require_main = __commonJS((exports, module) => {
   function dim(text) {
     return supportsAnsi() ? `\x1B[2m${text}\x1B[0m` : text;
   }
-  var LINE =
-    /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/gm;
+  var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
   function parse(src) {
     const obj = {};
     let lines = src.toString();
-    lines = lines.replace(
-      /\r\n?/gm,
-      `
-`,
-    );
+    lines = lines.replace(/\r\n?/mg, `
+`);
     let match;
     while ((match = LINE.exec(lines)) != null) {
       const key = match[1];
       let value = match[2] || "";
       value = value.trim();
       const maybeQuote = value[0];
-      value = value.replace(/^(['"`])([\s\S]*)\1$/gm, "$2");
+      value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
       if (maybeQuote === '"') {
-        value = value.replace(
-          /\\n/g,
-          `
-`,
-        );
+        value = value.replace(/\\n/g, `
+`);
         value = value.replace(/\\r/g, "\r");
       }
       obj[key] = value;
@@ -178,16 +104,14 @@ var require_main = __commonJS((exports, module) => {
     options.path = vaultPath;
     const result = DotenvModule.configDotenv(options);
     if (!result.parsed) {
-      const err = new Error(
-        `MISSING_DATA: Cannot parse ${vaultPath} for an unknown reason`,
-      );
+      const err = new Error(`MISSING_DATA: Cannot parse ${vaultPath} for an unknown reason`);
       err.code = "MISSING_DATA";
       throw err;
     }
     const keys = _dotenvKey(options).split(",");
     const length = keys.length;
     let decrypted;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0;i < length; i++) {
       try {
         const key = keys[i].trim();
         const attrs = _instructions(result, key);
@@ -202,13 +126,13 @@ var require_main = __commonJS((exports, module) => {
     return DotenvModule.parse(decrypted);
   }
   function _warn(message) {
-    console.error(`[dotenv@${version}][WARN] ${message}`);
+    console.error(`\u26A0 ${message}`);
   }
   function _debug(message) {
-    console.log(`[dotenv@${version}][DEBUG] ${message}`);
+    console.log(`\u2506 ${message}`);
   }
   function _log(message) {
-    console.log(`[dotenv@${version}] ${message}`);
+    console.log(`\u25C7 ${message}`);
   }
   function _dotenvKey(options) {
     if (options && options.DOTENV_KEY && options.DOTENV_KEY.length > 0) {
@@ -225,9 +149,7 @@ var require_main = __commonJS((exports, module) => {
       uri = new URL(dotenvKey);
     } catch (error) {
       if (error.code === "ERR_INVALID_URL") {
-        const err = new Error(
-          "INVALID_DOTENV_KEY: Wrong format. Must be in valid uri format like dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=development",
-        );
+        const err = new Error("INVALID_DOTENV_KEY: Wrong format. Must be in valid uri format like dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=development");
         err.code = "INVALID_DOTENV_KEY";
         throw err;
       }
@@ -248,9 +170,7 @@ var require_main = __commonJS((exports, module) => {
     const environmentKey = `DOTENV_VAULT_${environment.toUpperCase()}`;
     const ciphertext = result.parsed[environmentKey];
     if (!ciphertext) {
-      const err = new Error(
-        `NOT_FOUND_DOTENV_ENVIRONMENT: Cannot locate environment ${environmentKey} in your .env.vault file.`,
-      );
+      const err = new Error(`NOT_FOUND_DOTENV_ENVIRONMENT: Cannot locate environment ${environmentKey} in your .env.vault file.`);
       err.code = "NOT_FOUND_DOTENV_ENVIRONMENT";
       throw err;
     }
@@ -262,15 +182,11 @@ var require_main = __commonJS((exports, module) => {
       if (Array.isArray(options.path)) {
         for (const filepath of options.path) {
           if (fs.existsSync(filepath)) {
-            possibleVaultPath = filepath.endsWith(".vault")
-              ? filepath
-              : `${filepath}.vault`;
+            possibleVaultPath = filepath.endsWith(".vault") ? filepath : `${filepath}.vault`;
           }
         }
       } else {
-        possibleVaultPath = options.path.endsWith(".vault")
-          ? options.path
-          : `${options.path}.vault`;
+        possibleVaultPath = options.path.endsWith(".vault") ? options.path : `${options.path}.vault`;
       }
     } else {
       possibleVaultPath = path.resolve(process.cwd(), ".env.vault");
@@ -281,19 +197,13 @@ var require_main = __commonJS((exports, module) => {
     return null;
   }
   function _resolveHome(envPath) {
-    return envPath[0] === "~"
-      ? path.join(os.homedir(), envPath.slice(1))
-      : envPath;
+    return envPath[0] === "~" ? path.join(os.homedir(), envPath.slice(1)) : envPath;
   }
   function _configVault(options) {
-    const debug = parseBoolean(
-      process.env.DOTENV_CONFIG_DEBUG || (options && options.debug),
-    );
-    const quiet = parseBoolean(
-      process.env.DOTENV_CONFIG_QUIET || (options && options.quiet),
-    );
+    const debug = parseBoolean(process.env.DOTENV_CONFIG_DEBUG || options && options.debug);
+    const quiet = parseBoolean(process.env.DOTENV_CONFIG_QUIET || options && options.quiet);
     if (debug || !quiet) {
-      _log("Loading env from encrypted .env.vault");
+      _log("loading env from encrypted .env.vault");
     }
     const parsed = DotenvModule._parseVault(options);
     let processEnv = process.env;
@@ -310,17 +220,13 @@ var require_main = __commonJS((exports, module) => {
     if (options && options.processEnv != null) {
       processEnv = options.processEnv;
     }
-    let debug = parseBoolean(
-      processEnv.DOTENV_CONFIG_DEBUG || (options && options.debug),
-    );
-    let quiet = parseBoolean(
-      processEnv.DOTENV_CONFIG_QUIET || (options && options.quiet),
-    );
+    let debug = parseBoolean(processEnv.DOTENV_CONFIG_DEBUG || options && options.debug);
+    let quiet = parseBoolean(processEnv.DOTENV_CONFIG_QUIET || options && options.quiet);
     if (options && options.encoding) {
       encoding = options.encoding;
     } else {
       if (debug) {
-        _debug("No encoding is specified. UTF-8 is used by default");
+        _debug("no encoding is specified (UTF-8 is used by default)");
       }
     }
     let optionPaths = [dotenvPath];
@@ -342,7 +248,7 @@ var require_main = __commonJS((exports, module) => {
         DotenvModule.populate(parsedAll, parsed, options);
       } catch (e) {
         if (debug) {
-          _debug(`Failed to load ${path2} ${e.message}`);
+          _debug(`failed to load ${path2} ${e.message}`);
         }
         lastError = e;
       }
@@ -359,14 +265,12 @@ var require_main = __commonJS((exports, module) => {
           shortPaths.push(relative);
         } catch (e) {
           if (debug) {
-            _debug(`Failed to load ${filePath} ${e.message}`);
+            _debug(`failed to load ${filePath} ${e.message}`);
           }
           lastError = e;
         }
       }
-      _log(
-        `injecting env (${keysCount}) from ${shortPaths.join(",")} ${dim(`-- tip: ${_getRandomTip()}`)}`,
-      );
+      _log(`injected env (${keysCount}) from ${shortPaths.join(",")} ${dim(`// tip: ${_getRandomTip()}`)}`);
     }
     if (lastError) {
       return { parsed: parsedAll, error: lastError };
@@ -380,9 +284,7 @@ var require_main = __commonJS((exports, module) => {
     }
     const vaultPath = _vaultPath(options);
     if (!vaultPath) {
-      _warn(
-        `You set DOTENV_KEY but you are missing a .env.vault file at ${vaultPath}. Did you forget to build it?`,
-      );
+      _warn(`you set DOTENV_KEY but you are missing a .env.vault file at ${vaultPath}`);
       return DotenvModule.configDotenv(options);
     }
     return DotenvModule._configVault(options);
@@ -400,18 +302,13 @@ var require_main = __commonJS((exports, module) => {
     } catch (error) {
       const isRange = error instanceof RangeError;
       const invalidKeyLength = error.message === "Invalid key length";
-      const decryptionFailed =
-        error.message === "Unsupported state or unable to authenticate data";
+      const decryptionFailed = error.message === "Unsupported state or unable to authenticate data";
       if (isRange || invalidKeyLength) {
-        const err = new Error(
-          "INVALID_DOTENV_KEY: It must be 64 characters long (or more)",
-        );
+        const err = new Error("INVALID_DOTENV_KEY: It must be 64 characters long (or more)");
         err.code = "INVALID_DOTENV_KEY";
         throw err;
       } else if (decryptionFailed) {
-        const err = new Error(
-          "DECRYPTION_FAILED: Please check your DOTENV_KEY",
-        );
+        const err = new Error("DECRYPTION_FAILED: Please check your DOTENV_KEY");
         err.code = "DECRYPTION_FAILED";
         throw err;
       } else {
@@ -424,9 +321,7 @@ var require_main = __commonJS((exports, module) => {
     const override = Boolean(options && options.override);
     const populated = {};
     if (typeof parsed !== "object") {
-      const err = new Error(
-        "OBJECT_REQUIRED: Please check the processEnv argument being passed to populate",
-      );
+      const err = new Error("OBJECT_REQUIRED: Please check the processEnv argument being passed to populate");
       err.code = "OBJECT_REQUIRED";
       throw err;
     }
@@ -457,7 +352,7 @@ var require_main = __commonJS((exports, module) => {
     config,
     decrypt,
     parse,
-    populate,
+    populate
   };
   exports.configDotenv = DotenvModule.configDotenv;
   exports._configVault = DotenvModule._configVault;
@@ -469,7 +364,29 @@ var require_main = __commonJS((exports, module) => {
   module.exports = DotenvModule;
 });
 
-// app.ts
+// src/server/utils/error.ts
+class AppError extends Error {
+  status;
+  constructor(message, status = 500) {
+    super(message);
+    this.status = status;
+  }
+}
+class UnauthorizedError extends AppError {
+  constructor(message = "Unauthorized") {
+    super(message, 401);
+  }
+}
+
+class BadRequestError extends AppError {
+  constructor(message = "Bad request") {
+    super(message, 400);
+  }
+}
+
+// src/server/app.ts
+import { join } from "path";
+var baseDir = import.meta.dir;
 var createApp = () => {
   const middleware = [];
   const routes = {};
@@ -478,13 +395,12 @@ var createApp = () => {
       return result;
     }
     return new Response(JSON.stringify(result), {
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }
     });
   };
   const htmlWrap = (html) => {
-    console.log("Wrapping HTML response");
     return new Response(html, {
-      headers: { "Content-Type": "text/html" },
+      headers: { "Content-Type": "text/html; charset=utf-8" }
     });
   };
   const executeMiddleware = async (req, res) => {
@@ -495,10 +411,10 @@ var createApp = () => {
       }
       index = i;
       const mw = middleware[i];
-      if (!mw) return null;
+      if (!mw)
+        return null;
       const result = await mw(req, res, () => dispatch(i + 1));
       if (result instanceof Response) {
-        console.log("Middleware returned Response", result);
         return result;
       }
       return null;
@@ -507,14 +423,27 @@ var createApp = () => {
   };
   const wrapWithMiddleware = (cb) => {
     return async (req, res) => {
-      const mwResult = await executeMiddleware(req, res);
-      console.log({ mwResult });
-      if (mwResult) {
-        console.log("retrun mwResult", { mwResult });
-        return mwResult;
+      try {
+        const mwResult = await executeMiddleware(req, res);
+        if (mwResult) {
+          return mwResult;
+        }
+        const result = await cb(req, res);
+        return wrapResponse(result);
+      } catch (error) {
+        let status = 500;
+        let message = "Internal Server Error";
+        if (error instanceof AppError) {
+          status = error.status;
+          message = error.message;
+        } else if (error instanceof Error) {
+          message = error.message;
+        }
+        return new Response(JSON.stringify({ error: message }), {
+          status,
+          headers: { "Content-Type": "application/json" }
+        });
       }
-      const result = await cb(req, res);
-      return wrapResponse(result);
     };
   };
   const createMethodHandler = (path, method, cb) => {
@@ -528,10 +457,7 @@ var createApp = () => {
     if (typeof routes[path] === "object" && routes[path][method]) {
       throw new Error(`Method ${method} already exists for path ${path}`);
     }
-    if (
-      typeof routes[path] === "object" &&
-      Object.keys(routes[path]).length === 0
-    ) {
+    if (typeof routes[path] === "object" && Object.keys(routes[path]).length === 0) {
       routes[path] = { [method]: wrappedCallback };
     } else if (typeof routes[path] === "object") {
       routes[path][method] = wrappedCallback;
@@ -564,11 +490,30 @@ var createApp = () => {
     const server = Bun.serve({
       port,
       routes,
-      fetch() {
-        return new Response("Not Found", { status: 404 });
-      },
+      async fetch(req) {
+        const url = new URL(req.url);
+        const path = url.pathname;
+        if (!path.startsWith("/public")) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              Location: "/login"
+            }
+          });
+        }
+        try {
+          const fileUrl = join(baseDir, `../client${path}`);
+          const file = Bun.file(fileUrl);
+          if (!await file.exists()) {
+            return new Response("Not Found", { status: 404 });
+          }
+          return new Response(file);
+        } catch (e) {
+          console.error("Static middleware error:", e);
+          return new Response("Internal Server Error", { status: 500 });
+        }
+      }
     });
-    console.log(`Server running at ${server.url}`);
     callback?.();
   };
   return {
@@ -578,36 +523,16 @@ var createApp = () => {
     methodPut,
     methodHtml,
     use,
-    listen,
+    listen
   };
 };
 
-// db/db.ts
+// src/server/db/db.ts
 var dotenv = __toESM(require_main(), 1);
-var { SQL } = globalThis.Bun;
+var {SQL } = globalThis.Bun;
 dotenv.config();
 var db = new SQL(process.env.DATABASE_URL);
 var db_default = db;
-
-// utils/error.ts
-class AppError extends Error {
-  status;
-  constructor(message, status = 500) {
-    super(message);
-    this.status = status;
-  }
-}
-class UnauthorizedError extends AppError {
-  constructor(message = "Unauthorized") {
-    super(message, 401);
-  }
-}
-
-class BadRequestError extends AppError {
-  constructor(message = "Bad request") {
-    super(message, 400);
-  }
-}
 // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist-node/native.js
 import { randomUUID } from "crypto";
 var native_default = { randomUUID };
@@ -621,37 +546,16 @@ function rng() {
     randomFillSync(rnds8Pool);
     poolPtr = 0;
   }
-  return rnds8Pool.slice(poolPtr, (poolPtr += 16));
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
 }
 
 // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist-node/stringify.js
 var byteToHex = [];
-for (let i = 0; i < 256; ++i) {
+for (let i = 0;i < 256; ++i) {
   byteToHex.push((i + 256).toString(16).slice(1));
 }
 function unsafeStringify(arr, offset = 0) {
-  return (
-    byteToHex[arr[offset + 0]] +
-    byteToHex[arr[offset + 1]] +
-    byteToHex[arr[offset + 2]] +
-    byteToHex[arr[offset + 3]] +
-    "-" +
-    byteToHex[arr[offset + 4]] +
-    byteToHex[arr[offset + 5]] +
-    "-" +
-    byteToHex[arr[offset + 6]] +
-    byteToHex[arr[offset + 7]] +
-    "-" +
-    byteToHex[arr[offset + 8]] +
-    byteToHex[arr[offset + 9]] +
-    "-" +
-    byteToHex[arr[offset + 10]] +
-    byteToHex[arr[offset + 11]] +
-    byteToHex[arr[offset + 12]] +
-    byteToHex[arr[offset + 13]] +
-    byteToHex[arr[offset + 14]] +
-    byteToHex[arr[offset + 15]]
-  ).toLowerCase();
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
 
 // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist-node/v4.js
@@ -661,16 +565,14 @@ function _v4(options, buf, offset) {
   if (rnds.length < 16) {
     throw new Error("Random bytes length must be >= 16");
   }
-  rnds[6] = (rnds[6] & 15) | 64;
-  rnds[8] = (rnds[8] & 63) | 128;
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
   if (buf) {
     offset = offset || 0;
     if (offset < 0 || offset + 16 > buf.length) {
-      throw new RangeError(
-        `UUID byte range ${offset}:${offset + 15} is out of buffer bounds`,
-      );
+      throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
     }
-    for (let i = 0; i < 16; ++i) {
+    for (let i = 0;i < 16; ++i) {
       buf[offset + i] = rnds[i];
     }
     return buf;
@@ -684,14 +586,43 @@ function v4(options, buf, offset) {
   return _v4(options, buf, offset);
 }
 var v4_default = v4;
-// modules/transactions/contoller.ts
+// src/server/modules/transactions/contoller.ts
 class Transaction {
-  async getTransaction() {
+  async getTransaction(filters) {
     try {
-      const transactions = await db_default`SELECT * FROM transactions`;
-      return transactions;
+      const rows = await db_default`
+        SELECT t.*, c.name AS category_name, c.type AS type
+        FROM transactions t
+        LEFT JOIN categories c ON c.id = t.category_id
+        ORDER BY t.date DESC
+      `;
+      let result = [...rows];
+      if (filters?.year) {
+        const y = Number(filters.year);
+        result = result.filter((t) => new Date(t.date).getFullYear() === y);
+      }
+      if (filters?.month) {
+        const m = Number(filters.month);
+        result = result.filter((t) => new Date(t.date).getMonth() + 1 === m);
+      }
+      if (filters?.categories?.length) {
+        result = result.filter((t) => filters.categories.includes(t.category_id));
+      }
+      return result;
     } catch (error) {
       throw new AppError(error.message || "Failed to fetch transactions");
+    }
+  }
+  async getTransactionYears() {
+    try {
+      const rows = await db_default`
+        SELECT DISTINCT EXTRACT(YEAR FROM date)::int AS year
+        FROM transactions
+        ORDER BY year DESC
+      `;
+      return rows.map((r) => r.year);
+    } catch (error) {
+      throw new AppError(error.message || "Failed to fetch years");
     }
   }
   async createTransaction(data) {
@@ -700,11 +631,10 @@ class Transaction {
     }
     const newTransaction = {
       id: v4_default(),
-      ...data,
+      ...data
     };
     try {
-      const transaction =
-        await db_default`INSERT INTO transactions (id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;
+      const transaction = await db_default`INSERT INTO transactions (id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;
       if (!transaction[0]) {
         throw new AppError("Failed to create transaction");
       }
@@ -722,17 +652,15 @@ class Transaction {
       throw new BadRequestError("Amount can`t be is negative");
     }
     try {
-      const existingTransaction =
-        await db_default`SELECT * FROM transactions WHERE id = ${id}`;
+      const existingTransaction = await db_default`SELECT * FROM transactions WHERE id = ${id}`;
       if (!existingTransaction[0]) {
         throw new AppError("Transaction not found");
       }
       const updatedTransaction = {
         ...existingTransaction[0],
-        ...data,
+        ...data
       };
-      const result =
-        await db_default`UPDATE transactions SET category_id = ${updatedTransaction.categoryId}, amount = ${updatedTransaction.amount}, note = ${updatedTransaction.note} WHERE id = ${id} RETURNING *`;
+      const result = await db_default`UPDATE transactions SET category_id = ${updatedTransaction.categoryId}, amount = ${updatedTransaction.amount}, note = ${updatedTransaction.note} WHERE id = ${id} RETURNING *`;
       if (!result[0]) {
         throw new AppError("Failed to update transaction");
       }
@@ -745,22 +673,838 @@ class Transaction {
     if (!id) {
       throw new BadRequestError("Id is not found");
     }
-    const result =
-      await db_default`DELETE FROM transactions WHERE id = ${id} RETURNING *`;
+    const result = await db_default`DELETE FROM transactions WHERE id = ${id} RETURNING *`;
     if (!result[0]) {
       throw new AppError("Failed to delete transaction");
     }
     return result[0];
   }
 }
-var transactionController = new Transaction();
+var transactionController = new Transaction;
 
-// modules/transactions/routes.ts
+// node_modules/ejs/lib/esm/ejs.js
+import fs from "fs";
+import path from "path";
+
+// node_modules/ejs/lib/esm/utils.js
+var exports_utils = {};
+__export(exports_utils, {
+  default: () => utils_default
+});
+var utils = {};
+var regExpChars = /[|\\{}()[\]^$+*?.]/g;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwn = function(obj, key) {
+  return hasOwnProperty.apply(obj, [key]);
+};
+utils.escapeRegExpChars = function(string) {
+  if (!string) {
+    return "";
+  }
+  return String(string).replace(regExpChars, "\\$&");
+};
+var _ENCODE_HTML_RULES = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&#34;",
+  "'": "&#39;"
+};
+var _MATCH_HTML = /[&<>'"]/g;
+function encode_char(c) {
+  return _ENCODE_HTML_RULES[c] || c;
+}
+var escapeFuncStr = `var _ENCODE_HTML_RULES = {
+` + `      "&": "&amp;"
+` + `    , "<": "&lt;"
+` + `    , ">": "&gt;"
+` + `    , '"': "&#34;"
+` + `    , "'": "&#39;"
+` + `    }
+` + `  , _MATCH_HTML = /[&<>'"]/g;
+` + `function encode_char(c) {
+` + `  return _ENCODE_HTML_RULES[c] || c;
+` + `};
+`;
+utils.escapeXML = function(markup) {
+  return markup == undefined ? "" : String(markup).replace(_MATCH_HTML, encode_char);
+};
+function escapeXMLToString() {
+  return Function.prototype.toString.call(this) + `;
+` + escapeFuncStr;
+}
+try {
+  if (typeof Object.defineProperty === "function") {
+    Object.defineProperty(utils.escapeXML, "toString", { value: escapeXMLToString });
+  } else {
+    utils.escapeXML.toString = escapeXMLToString;
+  }
+} catch (err) {
+  console.warn("Unable to set escapeXML.toString (is the Function prototype frozen?)");
+}
+utils.shallowCopy = function(to, from) {
+  from = from || {};
+  if (to !== null && to !== undefined) {
+    for (var p in from) {
+      if (!hasOwn(from, p)) {
+        continue;
+      }
+      if (p === "__proto__" || p === "constructor") {
+        continue;
+      }
+      to[p] = from[p];
+    }
+  }
+  return to;
+};
+utils.shallowCopyFromList = function(to, from, list) {
+  list = list || [];
+  from = from || {};
+  if (to !== null && to !== undefined) {
+    for (var i = 0;i < list.length; i++) {
+      var p = list[i];
+      if (typeof from[p] != "undefined") {
+        if (!hasOwn(from, p)) {
+          continue;
+        }
+        if (p === "__proto__" || p === "constructor") {
+          continue;
+        }
+        to[p] = from[p];
+      }
+    }
+  }
+  return to;
+};
+utils.cache = {
+  _data: {},
+  set: function(key, val) {
+    this._data[key] = val;
+  },
+  get: function(key) {
+    return this._data[key];
+  },
+  remove: function(key) {
+    delete this._data[key];
+  },
+  reset: function() {
+    this._data = {};
+  }
+};
+utils.hyphenToCamel = function(str) {
+  return str.replace(/-[a-z]/g, function(match) {
+    return match[1].toUpperCase();
+  });
+};
+utils.createNullProtoObjWherePossible = function() {
+  if (typeof Object.create == "function") {
+    return function() {
+      return Object.create(null);
+    };
+  }
+  if (!({ __proto__: null } instanceof Object)) {
+    return function() {
+      return { __proto__: null };
+    };
+  }
+  return function() {
+    return {};
+  };
+}();
+utils.hasOwnOnlyObject = function(obj) {
+  var o = utils.createNullProtoObjWherePossible();
+  for (var p in obj) {
+    if (hasOwn(obj, p)) {
+      o[p] = obj[p];
+    }
+  }
+  return o;
+};
+if (typeof exports_utils != "undefined") {
+  module_utils.exports = utils;
+}
+var utils_default = utils;
+
+// node_modules/ejs/lib/esm/ejs.js
+var DECLARATION_KEYWORD = "let";
+var ejs = {};
+var _DEFAULT_OPEN_DELIMITER = "<";
+var _DEFAULT_CLOSE_DELIMITER = ">";
+var _DEFAULT_DELIMITER = "%";
+var _DEFAULT_LOCALS_NAME = "locals";
+var _REGEX_STRING = "(<%%|%%>|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)";
+var _OPTS_PASSABLE_WITH_DATA = [
+  "delimiter",
+  "scope",
+  "context",
+  "debug",
+  "compileDebug",
+  "_with",
+  "rmWhitespace",
+  "strict",
+  "filename",
+  "async"
+];
+var _OPTS_PASSABLE_WITH_DATA_EXPRESS = _OPTS_PASSABLE_WITH_DATA.concat("cache");
+var _BOM = /^\uFEFF/;
+var _JS_IDENTIFIER = /^[a-zA-Z_$][0-9a-zA-Z_$]*$/;
+ejs.cache = utils_default.cache;
+ejs.fileLoader = fs.readFileSync;
+ejs.localsName = _DEFAULT_LOCALS_NAME;
+ejs.promiseImpl = new Function("return this;")().Promise;
+ejs.resolveInclude = function(name, filename, isDir) {
+  let dirname = path.dirname;
+  let extname = path.extname;
+  let resolve = path.resolve;
+  let includePath = resolve(isDir ? filename : dirname(filename), name);
+  let ext = extname(name);
+  if (!ext) {
+    includePath += ".ejs";
+  }
+  return includePath;
+};
+function resolvePaths(name, paths) {
+  let filePath;
+  if (paths.some(function(v) {
+    filePath = ejs.resolveInclude(name, v, true);
+    return fs.existsSync(filePath);
+  })) {
+    return filePath;
+  }
+}
+function getIncludePath(path2, options) {
+  let includePath;
+  let filePath;
+  let views = options.views;
+  let match = /^[A-Za-z]+:\\|^\//.exec(path2);
+  if (match && match.length) {
+    path2 = path2.replace(/^\/*/, "");
+    if (Array.isArray(options.root)) {
+      includePath = resolvePaths(path2, options.root);
+    } else {
+      includePath = ejs.resolveInclude(path2, options.root || "/", true);
+    }
+  } else {
+    if (options.filename) {
+      filePath = ejs.resolveInclude(path2, options.filename);
+      if (fs.existsSync(filePath)) {
+        includePath = filePath;
+      }
+    }
+    if (!includePath && Array.isArray(views)) {
+      includePath = resolvePaths(path2, views);
+    }
+    if (!includePath && typeof options.includer !== "function") {
+      throw new Error('Could not find the include file "' + options.escapeFunction(path2) + '"');
+    }
+  }
+  return includePath;
+}
+function handleCache(options, template) {
+  let func;
+  let filename = options.filename;
+  let hasTemplate = arguments.length > 1;
+  if (options.cache) {
+    if (!filename) {
+      throw new Error("cache option requires a filename");
+    }
+    func = ejs.cache.get(filename);
+    if (func) {
+      return func;
+    }
+    if (!hasTemplate) {
+      template = fileLoader(filename).toString().replace(_BOM, "");
+    }
+  } else if (!hasTemplate) {
+    if (!filename) {
+      throw new Error("Internal EJS error: no file name or template " + "provided");
+    }
+    template = fileLoader(filename).toString().replace(_BOM, "");
+  }
+  func = ejs.compile(template, options);
+  if (options.cache) {
+    ejs.cache.set(filename, func);
+  }
+  return func;
+}
+function tryHandleCache(options, data, cb) {
+  let result;
+  if (!cb) {
+    if (typeof ejs.promiseImpl == "function") {
+      return new ejs.promiseImpl(function(resolve, reject) {
+        try {
+          result = handleCache(options)(data);
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    } else {
+      throw new Error("Please provide a callback function");
+    }
+  } else {
+    try {
+      result = handleCache(options)(data);
+    } catch (err) {
+      return cb(err);
+    }
+    cb(null, result);
+  }
+}
+function fileLoader(filePath) {
+  return ejs.fileLoader(filePath);
+}
+function includeFile(path2, options) {
+  let opts = utils_default.shallowCopy(utils_default.createNullProtoObjWherePossible(), options);
+  opts.filename = getIncludePath(path2, opts);
+  if (typeof options.includer === "function") {
+    let includerResult = options.includer(path2, opts.filename);
+    if (includerResult) {
+      if (includerResult.filename) {
+        opts.filename = includerResult.filename;
+      }
+      if (includerResult.template) {
+        return handleCache(opts, includerResult.template);
+      }
+    }
+  }
+  return handleCache(opts);
+}
+function rethrow(err, str, flnm, lineno, esc) {
+  let lines = str.split(`
+`);
+  let start = Math.max(lineno - 3, 0);
+  let end = Math.min(lines.length, lineno + 3);
+  let filename = esc(flnm);
+  let context = lines.slice(start, end).map(function(line, i) {
+    let curr = i + start + 1;
+    return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+  }).join(`
+`);
+  err.path = filename;
+  err.message = (filename || "ejs") + ":" + lineno + `
+` + context + `
+
+` + err.message;
+  throw err;
+}
+function stripSemi(str) {
+  return str.replace(/;(\s*$)/, "$1");
+}
+ejs.compile = function compile(template, opts) {
+  let templ;
+  if (opts && opts.scope) {
+    console.warn("`scope` option is deprecated and will be removed in future EJS");
+    if (!opts.context) {
+      opts.context = opts.scope;
+    }
+    delete opts.scope;
+  }
+  templ = new Template(template, opts);
+  return templ.compile();
+};
+ejs.render = function(template, d, o) {
+  let data = d || utils_default.createNullProtoObjWherePossible();
+  let opts = o || utils_default.createNullProtoObjWherePossible();
+  if (arguments.length == 2) {
+    utils_default.shallowCopyFromList(opts, data, _OPTS_PASSABLE_WITH_DATA);
+  }
+  return handleCache(opts, template)(data);
+};
+ejs.renderFile = function() {
+  let args = Array.prototype.slice.call(arguments);
+  let filename = args.shift();
+  let cb;
+  let opts = { filename };
+  let data;
+  let viewOpts;
+  if (typeof arguments[arguments.length - 1] == "function") {
+    cb = args.pop();
+  }
+  if (args.length) {
+    data = args.shift();
+    if (args.length) {
+      utils_default.shallowCopy(opts, args.pop());
+    } else {
+      if (data.settings) {
+        if (data.settings.views) {
+          opts.views = data.settings.views;
+        }
+        if (data.settings["view cache"]) {
+          opts.cache = true;
+        }
+        viewOpts = data.settings["view options"];
+        if (viewOpts) {
+          utils_default.shallowCopy(opts, viewOpts);
+        }
+      }
+      utils_default.shallowCopyFromList(opts, data, _OPTS_PASSABLE_WITH_DATA_EXPRESS);
+    }
+    opts.filename = filename;
+  } else {
+    data = utils_default.createNullProtoObjWherePossible();
+  }
+  return tryHandleCache(opts, data, cb);
+};
+ejs.Template = Template;
+ejs.clearCache = function() {
+  ejs.cache.reset();
+};
+function Template(text, optsParam) {
+  let opts = utils_default.hasOwnOnlyObject(optsParam);
+  let options = utils_default.createNullProtoObjWherePossible();
+  this.templateText = text;
+  this.mode = null;
+  this.truncate = false;
+  this.currentLine = 1;
+  this.source = "";
+  options.escapeFunction = opts.escape || opts.escapeFunction || utils_default.escapeXML;
+  options.compileDebug = opts.compileDebug !== false;
+  options.debug = !!opts.debug;
+  options.filename = opts.filename;
+  options.openDelimiter = opts.openDelimiter || ejs.openDelimiter || _DEFAULT_OPEN_DELIMITER;
+  options.closeDelimiter = opts.closeDelimiter || ejs.closeDelimiter || _DEFAULT_CLOSE_DELIMITER;
+  options.delimiter = opts.delimiter || ejs.delimiter || _DEFAULT_DELIMITER;
+  options.strict = opts.strict || false;
+  options.context = opts.context;
+  options.cache = opts.cache || false;
+  options.rmWhitespace = opts.rmWhitespace;
+  options.root = opts.root;
+  options.includer = opts.includer;
+  options.outputFunctionName = opts.outputFunctionName;
+  options.localsName = opts.localsName || ejs.localsName || _DEFAULT_LOCALS_NAME;
+  options.views = opts.views;
+  options.async = opts.async;
+  options.destructuredLocals = opts.destructuredLocals;
+  options.legacyInclude = typeof opts.legacyInclude != "undefined" ? !!opts.legacyInclude : true;
+  if (options.strict) {
+    options._with = false;
+  } else {
+    options._with = typeof opts._with != "undefined" ? opts._with : true;
+  }
+  this.opts = options;
+  this.regex = this.createRegex();
+}
+Template.modes = {
+  EVAL: "eval",
+  ESCAPED: "escaped",
+  RAW: "raw",
+  COMMENT: "comment",
+  LITERAL: "literal"
+};
+Template.prototype = {
+  createRegex: function() {
+    let str = _REGEX_STRING;
+    let delim = utils_default.escapeRegExpChars(this.opts.delimiter);
+    let open = utils_default.escapeRegExpChars(this.opts.openDelimiter);
+    let close = utils_default.escapeRegExpChars(this.opts.closeDelimiter);
+    str = str.replace(/%/g, delim).replace(/</g, open).replace(/>/g, close);
+    return new RegExp(str);
+  },
+  compile: function() {
+    let src;
+    let fn;
+    let opts = this.opts;
+    let prepended = "";
+    let appended = "";
+    let escapeFn = opts.escapeFunction;
+    let ctor;
+    let sanitizedFilename = opts.filename ? JSON.stringify(opts.filename) : "undefined";
+    if (!this.source) {
+      this.generateSource();
+      prepended += `  ${DECLARATION_KEYWORD} __output = "";
+` + `  function __append(s) { if (s !== undefined && s !== null) __output += s }
+`;
+      if (opts.outputFunctionName) {
+        if (!_JS_IDENTIFIER.test(opts.outputFunctionName)) {
+          throw new Error("outputFunctionName is not a valid JS identifier.");
+        }
+        prepended += `  ${DECLARATION_KEYWORD} ` + opts.outputFunctionName + " = __append;" + `
+`;
+      }
+      if (opts.localsName && !_JS_IDENTIFIER.test(opts.localsName)) {
+        throw new Error("localsName is not a valid JS identifier.");
+      }
+      if (opts.destructuredLocals && opts.destructuredLocals.length) {
+        let destructuring = `  ${DECLARATION_KEYWORD} __locals = (` + opts.localsName + ` || {}),
+`;
+        for (let i = 0;i < opts.destructuredLocals.length; i++) {
+          let name = opts.destructuredLocals[i];
+          if (!_JS_IDENTIFIER.test(name)) {
+            throw new Error("destructuredLocals[" + i + "] is not a valid JS identifier.");
+          }
+          if (i > 0) {
+            destructuring += `,
+  `;
+          }
+          destructuring += name + " = __locals." + name;
+        }
+        prepended += destructuring + `;
+`;
+      }
+      if (opts._with !== false) {
+        prepended += "  with (" + opts.localsName + " || {}) {" + `
+`;
+        appended += "  }" + `
+`;
+      }
+      appended += "  return __output;" + `
+`;
+      this.source = prepended + this.source + appended;
+    }
+    if (opts.compileDebug) {
+      src = `${DECLARATION_KEYWORD} __line = 1` + `
+` + "  , __lines = " + JSON.stringify(this.templateText) + `
+` + "  , __filename = " + sanitizedFilename + ";" + `
+` + "try {" + `
+` + this.source + "} catch (e) {" + `
+` + "  rethrow(e, __lines, __filename, __line, escapeFn);" + `
+` + "}" + `
+`;
+    } else {
+      src = this.source;
+    }
+    if (opts.strict) {
+      src = `"use strict";
+` + src;
+    }
+    if (opts.debug) {
+      console.log(src);
+    }
+    if (opts.compileDebug && opts.filename) {
+      src = src + `
+` + "//# sourceURL=" + sanitizedFilename + `
+`;
+    }
+    try {
+      if (opts.async) {
+        try {
+          ctor = new Function("return (async function(){}).constructor;")();
+        } catch (e) {
+          if (e instanceof SyntaxError) {
+            throw new Error("This environment does not support async/await");
+          } else {
+            throw e;
+          }
+        }
+      } else {
+        ctor = Function;
+      }
+      fn = new ctor(opts.localsName + ", escapeFn, include, rethrow", src);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        if (opts.filename) {
+          e.message += " in " + opts.filename;
+        }
+        e.message += ` while compiling ejs
+
+`;
+        e.message += `If the above error is not helpful, you may want to try EJS-Lint:
+`;
+        e.message += "https://github.com/RyanZim/EJS-Lint";
+        if (!opts.async) {
+          e.message += `
+`;
+          e.message += "Or, if you meant to create an async function, pass `async: true` as an option.";
+        }
+      }
+      throw e;
+    }
+    let returnedFn = function anonymous(data) {
+      let include = function(path2, includeData) {
+        let d = utils_default.shallowCopy(utils_default.createNullProtoObjWherePossible(), data);
+        if (includeData) {
+          d = utils_default.shallowCopy(d, includeData);
+        }
+        return includeFile(path2, opts)(d);
+      };
+      return fn.apply(opts.context, [data || utils_default.createNullProtoObjWherePossible(), escapeFn, include, rethrow]);
+    };
+    if (opts.filename && typeof Object.defineProperty === "function") {
+      let filename = opts.filename;
+      let basename = path.basename(filename, path.extname(filename));
+      try {
+        Object.defineProperty(returnedFn, "name", {
+          value: basename,
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+      } catch (e) {}
+    }
+    return returnedFn;
+  },
+  generateSource: function() {
+    let opts = this.opts;
+    if (opts.rmWhitespace) {
+      this.templateText = this.templateText.replace(/[\r\n]+/g, `
+`).replace(/^\s+|\s+$/gm, "");
+    }
+    let self = this;
+    let d = this.opts.delimiter;
+    let o = this.opts.openDelimiter;
+    let c = this.opts.closeDelimiter;
+    let openWhitespaceSlurpTag = utils_default.escapeRegExpChars(o + d + "_");
+    let closeWhitespaceSlurpTag = utils_default.escapeRegExpChars("_" + d + c);
+    let openWhitespaceSlurpReplacement = o + d + "_";
+    let closeWhitespaceSlurpReplacement = "_" + d + c;
+    this.templateText = this.templateText.replace(new RegExp("[ \\t]*" + openWhitespaceSlurpTag, "gm"), openWhitespaceSlurpReplacement).replace(new RegExp(closeWhitespaceSlurpTag + "[ \\t]*", "gm"), closeWhitespaceSlurpReplacement);
+    let matches = this.parseTemplateText();
+    if (matches && matches.length) {
+      matches.forEach(function(line, index) {
+        let closing;
+        if (line.indexOf(o + d) === 0 && line.indexOf(o + d + d) !== 0) {
+          closing = matches[index + 2];
+          if (!(closing == d + c || closing == "-" + d + c || closing == "_" + d + c)) {
+            throw new Error('Could not find matching close tag for "' + line + '".');
+          }
+        }
+        self.scanLine(line);
+      });
+    }
+  },
+  parseTemplateText: function() {
+    let str = this.templateText;
+    let pat = this.regex;
+    let result = pat.exec(str);
+    let arr = [];
+    let firstPos;
+    while (result) {
+      firstPos = result.index;
+      if (firstPos !== 0) {
+        arr.push(str.substring(0, firstPos));
+        str = str.slice(firstPos);
+      }
+      arr.push(result[0]);
+      str = str.slice(result[0].length);
+      result = pat.exec(str);
+    }
+    if (str) {
+      arr.push(str);
+    }
+    return arr;
+  },
+  _addOutput: function(line) {
+    if (this.truncate) {
+      line = line.replace(/^(?:\r\n|\r|\n)/, "");
+      this.truncate = false;
+    }
+    if (!line) {
+      return line;
+    }
+    line = line.replace(/\\/g, "\\\\");
+    line = line.replace(/\n/g, "\\n");
+    line = line.replace(/\r/g, "\\r");
+    line = line.replace(/"/g, "\\\"");
+    this.source += '    ; __append("' + line + '")' + `
+`;
+  },
+  scanLine: function(line) {
+    let self = this;
+    let d = this.opts.delimiter;
+    let o = this.opts.openDelimiter;
+    let c = this.opts.closeDelimiter;
+    let newLineCount = 0;
+    newLineCount = line.split(`
+`).length - 1;
+    switch (line) {
+      case o + d:
+      case o + d + "_":
+        this.mode = Template.modes.EVAL;
+        break;
+      case o + d + "=":
+        this.mode = Template.modes.ESCAPED;
+        break;
+      case o + d + "-":
+        this.mode = Template.modes.RAW;
+        break;
+      case o + d + "#":
+        this.mode = Template.modes.COMMENT;
+        break;
+      case o + d + d:
+        this.mode = Template.modes.LITERAL;
+        this.source += '    ; __append("' + line.replace(o + d + d, o + d) + '")' + `
+`;
+        break;
+      case d + d + c:
+        this.mode = Template.modes.LITERAL;
+        this.source += '    ; __append("' + line.replace(d + d + c, d + c) + '")' + `
+`;
+        break;
+      case d + c:
+      case "-" + d + c:
+      case "_" + d + c:
+        if (this.mode == Template.modes.LITERAL) {
+          this._addOutput(line);
+        }
+        this.mode = null;
+        this.truncate = line.indexOf("-") === 0 || line.indexOf("_") === 0;
+        break;
+      default:
+        if (this.mode) {
+          switch (this.mode) {
+            case Template.modes.EVAL:
+            case Template.modes.ESCAPED:
+            case Template.modes.RAW:
+              if (line.lastIndexOf("//") > line.lastIndexOf(`
+`)) {
+                line += `
+`;
+              }
+          }
+          switch (this.mode) {
+            case Template.modes.EVAL:
+              this.source += "    ; " + line + `
+`;
+              break;
+            case Template.modes.ESCAPED:
+              this.source += "    ; __append(escapeFn(" + stripSemi(line) + "))" + `
+`;
+              break;
+            case Template.modes.RAW:
+              this.source += "    ; __append(" + stripSemi(line) + ")" + `
+`;
+              break;
+            case Template.modes.COMMENT:
+              break;
+            case Template.modes.LITERAL:
+              this._addOutput(line);
+              break;
+          }
+        } else {
+          this._addOutput(line);
+        }
+    }
+    if (self.opts.compileDebug && newLineCount) {
+      this.currentLine += newLineCount;
+      this.source += "    ; __line = " + this.currentLine + `
+`;
+    }
+  }
+};
+ejs.escapeXML = utils_default.escapeXML;
+ejs.__express = ejs.renderFile;
+if (typeof window != "undefined") {
+  window.ejs = ejs;
+}
+if (typeof module_ejs != "undefined") {
+  module_ejs.exports = ejs;
+}
+var ejs_default = ejs;
+
+// src/server/utils/renderPage.ts
+import { join as join2 } from "path";
+var baseDir2 = import.meta.dir;
+async function renderPage(page, data = {}) {
+  const pagePath = join2(baseDir2, "../../client/views/pages", `${page}.ejs`);
+  const layoutPath = join2(baseDir2, "../../client/views/layout/layout.ejs");
+  const content = await ejs_default.renderFile(pagePath, data);
+  return await ejs_default.renderFile(layoutPath, { content });
+}
+async function renderHtmlPart(htmlPath, data = {}) {
+  const html = join2(baseDir2, `../../client/${htmlPath.clientPath}`, `${htmlPath.name}.ejs`);
+  return await ejs_default.renderFile(html, data);
+}
+
+// src/server/modules/category/contoller.ts
+class Categories {
+  async getAllCategories(type) {
+    try {
+      if (type) {
+        const categories2 = await db_default`SELECT * FROM categories WHERE type = ${type}`;
+        return categories2;
+      }
+      const categories = await db_default`SELECT * FROM categories`;
+      return categories;
+    } catch (error) {
+      throw new AppError(error.message || "Failed to fetch categories");
+    }
+  }
+  async renderOptions(type) {
+    const data = await this.getAllCategories(type);
+    return await renderHtmlPart({ clientPath: "views/partials/common/", name: "optionsList" }, { data });
+  }
+  async createCategory(data) {
+    const newCategory = {
+      id: v4_default(),
+      ...data
+    };
+    try {
+      const category = await db_default`INSERT INTO categories (id, name, type) VALUES (${newCategory.id}, ${newCategory.name}, ${newCategory.type})  RETURNING *`;
+      if (!category[0]) {
+        throw new AppError("Failed to create category");
+      }
+      return category[0];
+    } catch (error) {
+      throw new AppError(error.message || "Failed to create category");
+    }
+  }
+  async deleteCategory(categoryId) {
+    if (!categoryId) {
+      throw new AppError("Category ID is required");
+    }
+    try {
+      const result = await db_default`DELETE FROM categories WHERE id = ${categoryId} RETURNING *`;
+      if (!result[0]) {
+        throw new AppError("Category not found");
+      }
+      return { message: "Category deleted successfully" };
+    } catch (error) {
+      throw new AppError(error.message || "Failed to delete category");
+    }
+  }
+  async updateNameCategory(categoryId, newName) {
+    if (!categoryId || !newName) {
+      throw new AppError("Category ID and new name are required");
+    }
+    try {
+      const result = await db_default`UPDATE categories SET name = ${newName} WHERE id = ${categoryId} RETURNING *`;
+      if (!result[0]) {
+        throw new AppError("Category not found");
+      }
+      return result[0];
+    } catch (error) {
+      throw new AppError(error.message || "Failed to update category");
+    }
+  }
+}
+var categoryController = new Categories;
+
+// src/server/modules/transactions/routes.ts
 var initTransactionsRoutes = (app) => {
+  app.methodHtml("/api/renderTransactions", async (req) => {
+    const url = new URL(req.url);
+    const year = url.searchParams.get("year");
+    const month = url.searchParams.get("month");
+    const categories = url.searchParams.getAll("categories");
+    const filters = { year, month, categories };
+    const [data, years, allCategories] = await Promise.all([
+      transactionController.getTransaction(filters),
+      transactionController.getTransactionYears(),
+      categoryController.getAllCategories()
+    ]);
+    return renderHtmlPart({ clientPath: "views/partials/transaction/", name: "transactionsList" }, { data, filters, years, allCategories });
+  });
   app.methodGet("/transaction", transactionController.getTransaction);
   app.methodPost("/api/transaction", async (req) => {
     const newTransaction = await req.json();
-    return transactionController.createTransaction(newTransaction);
+    const result = await transactionController.createTransaction(newTransaction);
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "transactionCreated"
+      }
+    });
+  });
+  app.methodDelete("/api/transaction/:id", async (req) => {
+    const { id } = req.params;
+    const result = await transactionController.deleteTransaction(id);
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "transactionCreated"
+      }
+    });
   });
   app.methodPut("/api/transaction/:id", async (req) => {
     const { id } = req.params;
@@ -769,12 +1513,11 @@ var initTransactionsRoutes = (app) => {
   });
 };
 
-// modules/users/controller.ts
+// src/server/modules/users/controller.ts
 class Users {
   async createUser(name) {
     try {
-      const newUser =
-        await db_default`INSERT INTO users (name) VALUES (${name}) RETURNING *`;
+      const newUser = await db_default`INSERT INTO users (name) VALUES (${name}) RETURNING *`;
       if (!newUser[0]) {
         throw new AppError("Failed to create user", 500);
       }
@@ -805,22 +1548,10 @@ class Users {
       throw new AppError(JSON.stringify(error), 500);
     }
   }
-  async deleteAllUsers() {
-    try {
-      await db_default`DELETE FROM users`;
-      const result = await db_default`DELETE FROM users`;
-      return {
-        success: true,
-        deletedCount: result.count,
-      };
-    } catch (error) {
-      throw new AppError(JSON.stringify(error), 500);
-    }
-  }
 }
-var userController = new Users();
+var userController = new Users;
 
-// modules/users/routes.ts
+// src/server/modules/users/routes.ts
 var initUsersRoutes = (app) => {
   app.methodGet("/users/:id", (req) => {
     const { id } = req.params;
@@ -838,78 +1569,41 @@ var initUsersRoutes = (app) => {
   });
 };
 
-// modules/category/contoller.ts
-class Categories {
-  async getAllCategories() {
-    try {
-      const categories = await db_default`SELECT * FROM categories`;
-      return categories;
-    } catch (error) {
-      throw new AppError(error.message || "Failed to fetch categories");
-    }
-  }
-  async createCategory(data) {
-    const newCategory = {
-      id: v4_default(),
-      ...data,
-    };
-    try {
-      const category =
-        await db_default`INSERT INTO categories (id, name, type) VALUES (${newCategory.id}, ${newCategory.name}, ${newCategory.type})  RETURNING *`;
-      if (!category[0]) {
-        throw new AppError("Failed to create category");
-      }
-      return category[0];
-    } catch (error) {
-      throw new AppError(error.message || "Failed to create category");
-    }
-  }
-  async deleteCategory(categoryId) {
-    if (!categoryId) {
-      throw new AppError("Category ID is required");
-    }
-    try {
-      const result =
-        await db_default`DELETE FROM categories WHERE id = ${categoryId} RETURNING *`;
-      if (!result[0]) {
-        throw new AppError("Category not found");
-      }
-      return { message: "Category deleted successfully" };
-    } catch (error) {
-      throw new AppError(error.message || "Failed to delete category");
-    }
-  }
-  async updateNameCategory(categoryId, newName) {
-    if (!categoryId || !newName) {
-      throw new AppError("Category ID and new name are required");
-    }
-    try {
-      const result =
-        await db_default`UPDATE categories SET name = ${newName} WHERE id = ${categoryId} RETURNING *`;
-      if (!result[0]) {
-        throw new AppError("Category not found");
-      }
-      return result[0];
-    } catch (error) {
-      throw new AppError(error.message || "Failed to update category");
-    }
-  }
-}
-var categoryController = new Categories();
-
-// modules/category/routes.ts
+// src/server/modules/category/routes.ts
 var initCategoryRoutes = (app) => {
-  app.methodGet("/api/category", async (req) => {
+  app.methodGet("/api/category", async () => {
     return categoryController.getAllCategories();
   });
+  app.methodHtml("/api/renderOptions", (req) => {
+    const url = new URL(req.url);
+    const type = url.searchParams.get("type");
+    return categoryController.renderOptions(type);
+  });
+  app.methodHtml("/api/renderCategoryList", async (req) => {
+    const url = new URL(req.url);
+    const type = url.searchParams.get("type");
+    const data = await categoryController.getAllCategories(type);
+    return renderHtmlPart({ clientPath: "views/partials/category/", name: "categoryList" }, { data });
+  });
   app.methodPost("/api/category", async (req) => {
-    const newCategory = await req.json();
-    console.log({ newCategory });
-    return categoryController.createCategory(newCategory);
+    const result = await req.json();
+    const category = await categoryController.createCategory(result);
+    return new Response(JSON.stringify(category), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "categoryChanged"
+      }
+    });
   });
   app.methodDelete("/api/category/:id", async (req) => {
     const { id } = req.params;
-    return categoryController.deleteCategory(id);
+    const result = await categoryController.deleteCategory(id);
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "categoryChanged"
+      }
+    });
   });
   app.methodPut("/api/category/:id", async (req) => {
     const { id } = req.params;
@@ -918,123 +1612,107 @@ var initCategoryRoutes = (app) => {
   });
 };
 
-// modules/login/controller.ts
+// src/server/modules/login/controller.ts
 class LoginController {
   login(cookies, login, password) {
-    if (
-      login === process.env.ADMIN_LOGIN &&
-      password === process.env.ADMIN_PASSWORD
-    ) {
+    if (login === process.env.ADMIN_LOGIN && password === process.env.ADMIN_PASSWORD) {
       cookies.set("auth", process.env.AUTH_COOKIE_KEY || "", {
         httpOnly: true,
-        path: "/",
+        path: "/"
       });
       return new Response(null, {
         headers: {
-          "HX-Redirect": "/home",
-        },
+          "HX-Redirect": "/home"
+        }
       });
     } else {
-      throw new UnauthorizedError();
+      throw new UnauthorizedError;
     }
   }
 }
-var loginController = new LoginController();
+var loginController = new LoginController;
 
-// modules/login/routes.ts
+// src/server/modules/login/routes.ts
 var initLoginRoutes = (app) => {
   app.methodPost("/api/login", async (req, res) => {
     const cookies = req.cookies;
     const body = await req.formData();
     const login = body.get("login");
     const password = body.get("password");
-    loginController.login(cookies, login, password);
+    return loginController.login(cookies, login, password);
   });
 };
 
-// utils/isAuth.ts
+// src/server/utils/isAuth.ts
 class Auth {
   isAuth(req) {
     const cookies = req.cookies;
     const key = cookies.get("auth");
-    const path = new URL(req.url).pathname;
-    console.log({ path });
     if (key !== process.env.AUTH_COOKIE_KEY) {
       return false;
     }
     return true;
   }
 }
-var authController = new Auth();
+var authController = new Auth;
 
-// middlewares/authMiddleware.ts
+// src/server/middlewares/authMiddleware.ts
 var authMiddleware = async (req, res, next) => {
   const url = new URL(req.url);
-  const path = url.pathname;
+  const path2 = url.pathname;
   const isAuth = authController.isAuth(req);
-  const isPublicRoute =
-    path === "/login" || path === "/api/login" || path.startsWith("/public");
+  const isPublicRoute = path2 === "/login" || path2 === "/api/login" || path2.startsWith("/public");
   if (!isAuth && !isPublicRoute) {
-    if (path.startsWith("/api")) {
+    if (path2.startsWith("/api")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+        status: 401
       });
     }
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/login",
-      },
+        Location: "/login"
+      }
     });
   }
-  if (isAuth && path === "/login") {
+  if (isAuth && path2 === "/login") {
     const isHx = req.headers.get("HX-Request") === "true";
     if (isHx) {
       return new Response(null, {
         status: 200,
         headers: {
-          "HX-Redirect": "/home",
-        },
+          "HX-Redirect": "/home"
+        }
       });
     }
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/home",
-      },
+        Location: "/home"
+      }
     });
   }
   return await next?.();
 };
 
-// middlewares/errorHandlerMiddleware.ts
-var errorHandlerMiddleware = async (req, res, next) => {
-  try {
-    return await next?.();
-  } catch (error) {
-    let status = 500;
-    let message = "Internal Server Error";
-    if (error instanceof AppError) {
-      status = error.status;
-      message = error.message;
-    } else if (error instanceof Error) {
-      message = error.message;
-    }
-    return new Response(JSON.stringify({ error: message }), {
-      status,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+// src/server/modules/html/renderHtml.ts
+var renderHtml = async (app) => {
+  app.methodHtml("/login", () => {
+    return renderPage("login");
+  });
+  app.methodHtml("/home", () => {
+    return renderPage("index");
+  });
 };
 
-// index.ts
+// src/server/index.ts
 var app = createApp();
-app.use(errorHandlerMiddleware);
 app.use(authMiddleware);
 initLoginRoutes(app);
 initUsersRoutes(app);
 initTransactionsRoutes(app);
 initCategoryRoutes(app);
+renderHtml(app);
 app.listen(3000, () => {
   console.log("Server is running on port 3000 on http://localhost:3000");
 });
