@@ -110,6 +110,59 @@ WantedBy=multi-user.target
 sudo systemctl enable --now budget
 ```
 
+## Настройка Nginx (reverse proxy)
+
+Nginx принимает внешние HTTPS-запросы и проксирует их на `localhost:3000`, где работает bun-приложение. Статика (`/public/*`) отдаётся nginx напрямую с диска — без участия bun.
+
+```
+Internet → nginx :443 → bun :3000 → PostgreSQL
+                  └──► /public/* (с диска, минуя bun)
+```
+
+### 1. Установка nginx
+
+```bash
+sudo apt update && sudo apt install nginx -y
+sudo systemctl enable nginx
+```
+
+### 2. Скопировать конфиг
+
+```bash
+# Заменить your-domain.com на реальный домен или IP сервера
+sudo cp nginx.conf /etc/nginx/sites-available/budget
+sudo ln -s /etc/nginx/sites-available/budget /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default   # убрать дефолтный сайт
+
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### 3. SSL-сертификат (Let's Encrypt)
+
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+```
+
+Certbot сам пропишет пути к сертификатам в конфиге и настроит автообновление через cron.
+
+### 4. Открыть порты в firewall
+
+```bash
+sudo ufw allow 'Nginx Full'   # открывает 80 и 443
+sudo ufw allow OpenSSH
+sudo ufw enable
+```
+
+### 5. Что заменить в `nginx.conf`
+
+| Placeholder | Что подставить |
+|---|---|
+| `your-domain.com` | реальный домен или IP |
+| `/home/ubuntu/budjet/` | путь к проекту на сервере |
+
+---
+
 ## Схема базы данных
 
 ```sql
