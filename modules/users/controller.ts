@@ -39,6 +39,19 @@ class Users {
       throw new AppError(JSON.stringify(error), 500);
     }
   }
+
+  async deleteAllUsers() {
+    try {
+      await db`DELETE FROM users`;
+      const result = await db`DELETE FROM users`;
+      return {
+        success: true,
+        deletedCount: result.count,
+      };
+    } catch (error: any) {
+      throw new AppError(JSON.stringify(error), 500);
+    }
+  }
 }
 
 export const userController = new Users();

@@ -6,7 +6,7 @@ type TMethodsCallbacks<T = any> = (
   res?: Response,
 ) => any;
 type BunRoutes = Record<string, any>;
-type MiddlewareCallback = (
+export type MiddlewareCallback = (
   req: BunRequest,
   res?: Response,
   next?: () => Promise<Response | null | undefined>,
@@ -39,6 +39,10 @@ export const createApp = (): AppMethods => {
   };
 
   const htmlWrap = (html: string): Response => {
+<<<<<<< HEAD
+=======
+    console.log("Wrapping HTML response");
+>>>>>>> main
     return new Response(html, {
       headers: { "Content-Type": "text/html" },
     });
@@ -63,6 +67,10 @@ export const createApp = (): AppMethods => {
       const result = await mw(req, res, () => dispatch(i + 1));
 
       if (result instanceof Response) {
+<<<<<<< HEAD
+=======
+        console.log("Middleware returned Response", result);
+>>>>>>> main
         return result;
       }
 
@@ -74,7 +82,13 @@ export const createApp = (): AppMethods => {
   const wrapWithMiddleware = (cb: TMethodsCallbacks) => {
     return async (req: BunRequest, res: Response) => {
       const mwResult = await executeMiddleware(req, res);
+<<<<<<< HEAD
       if (mwResult) {
+=======
+      console.log({ mwResult });
+      if (mwResult) {
+        console.log("retrun mwResult", { mwResult });
+>>>>>>> main
         return mwResult;
       }
 
