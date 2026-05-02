@@ -1,8 +1,7 @@
 import type { BunRequest } from "bun";
 import { AppError } from "./utils/error";
 import { join } from "path";
-
-const baseDir = import.meta.dir;
+import { CLIENT_DIR } from "./utils/paths";
 
 type TMethods = "GET" | "POST" | "DELETE" | "PUT";
 type TMethodsCallbacks<T = any> = (
@@ -186,7 +185,7 @@ export const createApp = (): AppMethods => {
         }
 
         try {
-          const fileUrl = join(baseDir, `../client${path}`);
+          const fileUrl = join(CLIENT_DIR, path);
           const file = Bun.file(fileUrl);
 
           if (!(await file.exists())) {

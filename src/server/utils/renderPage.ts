@@ -1,11 +1,10 @@
 import ejs from "ejs";
-
 import { join } from "path";
+import { CLIENT_DIR } from "./paths";
 
-const baseDir = import.meta.dir;
 export async function renderPage(page: string, data = {}) {
-  const pagePath = join(baseDir, "../../client/views/pages", `${page}.ejs`);
-  const layoutPath = join(baseDir, "../../client/views/layout/layout.ejs");
+  const pagePath = join(CLIENT_DIR, "views/pages", `${page}.ejs`);
+  const layoutPath = join(CLIENT_DIR, "views/layout/layout.ejs");
 
   const content = await ejs.renderFile(pagePath, data);
 
@@ -16,10 +15,6 @@ export async function renderHtmlPart(
   htmlPath: { clientPath: string; name: string },
   data = {},
 ) {
-  const html = join(
-    baseDir,
-    `../../client/${htmlPath.clientPath}`,
-    `${htmlPath.name}.ejs`,
-  );
+  const html = join(CLIENT_DIR, htmlPath.clientPath, `${htmlPath.name}.ejs`);
   return await ejs.renderFile(html, data);
 }
