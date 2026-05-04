@@ -9,6 +9,10 @@ type TransactionFilters = {
   categories?: string[];
 };
 
+type TTransactionChanged = Omit<TTransaction, "categoryId"> & {
+  category_id: string;
+};
+
 class Transaction {
   async getTransaction(filters?: TransactionFilters) {
     try {
@@ -19,21 +23,24 @@ class Transaction {
         ORDER BY t.date DESC
       `;
 
-      let result = [...rows];
+      let result: TTransactionChanged[] = [...rows];
 
       if (filters?.year) {
         const y = Number(filters.year);
-        result = result.filter(t => new Date(t.date).getFullYear() === y);
+        result = result.filter((t) => new Date(t.date).getFullYear() === y);
       }
       if (filters?.month) {
         const m = Number(filters.month);
-        result = result.filter(t => new Date(t.date).getMonth() + 1 === m);
+        result = result.filter((t) => new Date(t.date).getMonth() + 1 === m);
       }
       if (filters?.categories?.length) {
-        result = result.filter(t => filters.categories!.includes(t.category_id));
+        result = result.filter((t) =>
+          filters.categories!.includes(t.category_id),
+        );
       }
-
-      return result;
+      return result.sort((a, b) => {
+        return a.date > b.date ? 1 : 0;
+      });
     } catch (error: any) {
       throw new AppError(error.message || "Failed to fetch transactions");
     }
