@@ -3,7 +3,13 @@
     <div class="login-logo">💰</div>
     <h1 class="login-title">Мой бюджет</h1>
     <p class="login-sub">Войдите, чтобы продолжить</p>
-    <form class="login-form" hx-post="/api/login">
+    <form
+      class="login-form"
+      x-data="{ hasError: false }"
+      hx-post="/api/login"
+      x-on:htmx:before-request="hasError = false"
+      x-on:htmx:response-error="hasError = true"
+    >
       <div class="form-group">
         <label for="login-input">Логин</label>
         <input
@@ -12,6 +18,7 @@
           value=""
           placeholder="Логин"
           autocomplete="username"
+          :class="{ error: hasError }"
         />
       </div>
       <div class="form-group">
@@ -23,8 +30,10 @@
           value=""
           placeholder="Пароль"
           autocomplete="current-password"
+          :class="{ error: hasError }"
         />
       </div>
+      <p x-show="hasError" class="login-error">Неверный логин или пароль</p>
       <button type="submit" class="login-btn">Войти</button>
     </form>
   </div>
