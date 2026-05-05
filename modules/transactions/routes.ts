@@ -1,6 +1,6 @@
 import type { AppMethods } from "../../app";
 import type { TTransaction } from "../../types/common.type";
-import { transactionController } from "./contoller";
+import { transactionController } from "./controller";
 
 export const initTransactionsRoutes = (app: AppMethods) => {
   app.methodGet("/transaction", transactionController.getTransaction);

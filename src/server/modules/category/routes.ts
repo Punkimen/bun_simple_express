@@ -1,6 +1,6 @@
 import type { AppMethods } from "../../app";
 import type { TCategory } from "../../types/common.type";
-import { categoryController } from "./contoller";
+import { categoryController } from "./controller";
 import { renderHtmlPart } from "../../utils/renderPage";
 
 export const initCategoryRoutes = (app: AppMethods) => {

@@ -1,8 +1,9 @@
 import type { AppMethods } from "../../app";
 import type { TTransaction } from "../../types/common.type";
-import { transactionController } from "./contoller";
-import { categoryController } from "../category/contoller";
+import { NotFoundError } from "../../utils/error.ts";
 import { renderHtmlPart } from "../../utils/renderPage";
+import { categoryController } from "../category/controller.ts";
+import { transactionController } from "./controller.ts";
 
 export const initTransactionsRoutes = (app: AppMethods) => {
   app.methodHtml("/api/renderTransactions", async (req) => {
@@ -25,7 +26,7 @@ export const initTransactionsRoutes = (app: AppMethods) => {
     );
   });
 
-  app.methodGet("/transaction", transactionController.getTransaction);
+  app.methodGet("/transaction", () => transactionController.getTransaction());
 
   app.methodPost<Omit<TTransaction, "id">>("/api/transaction", async (req) => {
     const newTransaction = await req.json();
@@ -42,6 +43,9 @@ export const initTransactionsRoutes = (app: AppMethods) => {
 
   app.methodDelete("/api/transaction/:id", async (req) => {
     const { id } = req.params;
+    if (!id) {
+      throw new NotFoundError("id is no found");
+    }
     const result = await transactionController.deleteTransaction(id);
     return new Response(JSON.stringify(result), {
       headers: {
@@ -56,6 +60,15 @@ export const initTransactionsRoutes = (app: AppMethods) => {
   >("/api/transaction/:id", async (req) => {
     const { id } = req.params;
     const updateData = await req.json();
-    return transactionController.updateTransaction(updateData, id);
+    const result = await transactionController.updateTransaction(
+      updateData,
+      id,
+    );
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "transactionCreated",
+      },
+    });
   });
 };

@@ -1,5 +1,5 @@
 import db from "../../db/db";
-import type { TCategory, TTransaction } from "../../types/common.type";
+import type { TTransaction } from "../../types/common.type";
 import { AppError, BadRequestError } from "../../utils/error";
 import { v4 as uuidv4 } from "uuid";
 

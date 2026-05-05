@@ -469,6 +469,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--shadow);
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
 .table-card.income  { border-top: 3px solid var(--income); }
 .table-card.expense { border-top: 3px solid var(--expense); }
 
@@ -577,6 +581,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .data-table .col-action { width: 2rem; text-align: center; }
+
+.tr-clickable { cursor: pointer; }
+.tr-clickable:hover td { background: var(--hover-bg, rgba(255,255,255,0.03)); }
 
 .btn-delete {
   background: none;
