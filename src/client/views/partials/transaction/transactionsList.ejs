@@ -33,6 +33,7 @@
         Нет доходов
       </div>
     <% } else { %>
+      <div class="table-scroll">
       <table class="data-table">
         <thead>
           <tr>
@@ -45,19 +46,28 @@
         </thead>
         <tbody>
           <% income.forEach(t => { %>
-            <tr>
+            <tr class="tr-clickable"
+                data-open-modal="transaction"
+                data-edit-id="<%= t.id %>"
+                data-edit-date="<%= new Date(t.date).toISOString().split('T')[0] %>"
+                data-edit-type="<%= t.type %>"
+                data-edit-category="<%= t.category_id %>"
+                data-edit-amount="<%= t.amount %>"
+                data-edit-note="<%= t.note || '' %>">
               <td class="col-date"><%= fmtDate(t.date) %></td>
               <td class="col-amount"><%= fmtAmount(t.amount) %></td>
               <td class="col-cat"><%= t.category_name || '—' %></td>
               <td class="col-note"><%= t.note || '—' %></td>
               <td class="col-action">
-                <button class="btn-delete" hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
+                <button class="btn-delete" onclick="event.stopPropagation()"
+                  hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
                   hx-confirm="Удалить транзакцию?">✕</button>
               </td>
             </tr>
           <% }) %>
         </tbody>
       </table>
+      </div>
     <% } %>
   </div>
 
@@ -77,6 +87,7 @@
         Нет расходов
       </div>
     <% } else { %>
+      <div class="table-scroll">
       <table class="data-table">
         <thead>
           <tr>
@@ -89,19 +100,28 @@
         </thead>
         <tbody>
           <% expense.forEach(t => { %>
-            <tr>
+            <tr class="tr-clickable"
+                data-open-modal="transaction"
+                data-edit-id="<%= t.id %>"
+                data-edit-date="<%= new Date(t.date).toISOString().split('T')[0] %>"
+                data-edit-type="<%= t.type %>"
+                data-edit-category="<%= t.category_id %>"
+                data-edit-amount="<%= t.amount %>"
+                data-edit-note="<%= t.note || '' %>">
               <td class="col-date"><%= fmtDate(t.date) %></td>
               <td class="col-amount"><%= fmtAmount(t.amount) %></td>
               <td class="col-cat"><%= t.category_name || '—' %></td>
               <td class="col-note"><%= t.note || '—' %></td>
               <td class="col-action">
-                <button class="btn-delete" hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
+                <button class="btn-delete" onclick="event.stopPropagation()"
+                  hx-delete="/api/transaction/<%= t.id %>" hx-swap="none"
                   hx-confirm="Удалить транзакцию?">✕</button>
               </td>
             </tr>
           <% }) %>
         </tbody>
       </table>
+      </div>
     <% } %>
   </div>
 

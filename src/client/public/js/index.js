@@ -1,5 +1,7 @@
 "use strict";
 
+let _pendingCategoryId = null;
+
 function openModal(id) {
   const modal = document.getElementById(id);
   if (modal) modal.classList.add("is-open");
@@ -9,6 +11,25 @@ function closeModal(id) {
   const modal = document.getElementById(id);
   if (modal) modal.classList.remove("is-open");
 }
+
+function resetTransactionForm() {
+  const form = document.getElementById("transaction-form");
+  const submitBtn = document.getElementById("transaction-submit-btn");
+  if (!form) return;
+  if (form.hasAttribute("hx-put")) {
+    form.removeAttribute("hx-put");
+    form.setAttribute("hx-post", "/api/transaction");
+    htmx.process(form);
+  }
+  if (submitBtn) submitBtn.textContent = "Создать";
+}
+
+document.addEventListener("htmx:afterSwap", (e) => {
+  if (e.detail.target.id === "category-select" && _pendingCategoryId) {
+    e.detail.target.value = _pendingCategoryId;
+    _pendingCategoryId = null;
+  }
+});
 
 function applyFilters() {
   const form = document.getElementById("transaction-filters");
@@ -28,10 +49,37 @@ document.addEventListener("click", (e) => {
     const type = openBtn.dataset.type;
 
     if (modal === "transaction") {
+      const editId = openBtn.dataset.editId;
       const typeSelect = document.getElementById("type-select");
-      if (typeSelect && type) {
-        typeSelect.value = type;
-        typeSelect.dispatchEvent(new Event("change"));
+
+      if (editId) {
+        const form = document.getElementById("transaction-form");
+        const submitBtn = document.getElementById("transaction-submit-btn");
+
+        if (typeSelect) {
+          typeSelect.value = openBtn.dataset.editType;
+          _pendingCategoryId = openBtn.dataset.editCategory;
+          typeSelect.dispatchEvent(new Event("change"));
+        }
+
+        if (form) {
+          const dateInput = form.querySelector('[name="date"]');
+          const amountInput = form.querySelector('[name="amount"]');
+          const noteInput = form.querySelector('[name="note"]');
+          if (dateInput) dateInput.value = openBtn.dataset.editDate;
+          if (amountInput) amountInput.value = openBtn.dataset.editAmount;
+          if (noteInput) noteInput.value = openBtn.dataset.editNote || "";
+
+          form.removeAttribute("hx-post");
+          form.setAttribute("hx-put", `/api/transaction/${editId}`);
+          htmx.process(form);
+        }
+        if (submitBtn) submitBtn.textContent = "Сохранить";
+      } else {
+        if (typeSelect && type) {
+          typeSelect.value = type;
+          typeSelect.dispatchEvent(new Event("change"));
+        }
       }
       openModal("transaction-modal");
     } else if (modal === "category") {
@@ -50,13 +98,17 @@ document.addEventListener("click", (e) => {
   // Close modal (× button)
   if (e.target.closest("[data-close-modal]")) {
     const modal = e.target.closest(".modal-overlay");
-    if (modal) modal.classList.remove("is-open");
+    if (modal) {
+      modal.classList.remove("is-open");
+      if (modal.id === "transaction-modal") resetTransactionForm();
+    }
     return;
   }
 
   // Close modal (backdrop click)
   if (e.target.classList.contains("modal-overlay")) {
     e.target.classList.remove("is-open");
+    if (e.target.id === "transaction-modal") resetTransactionForm();
     return;
   }
 
@@ -101,6 +153,7 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("transaction-modal-close", () => {
   closeModal("transaction-modal");
+  resetTransactionForm();
 });
 
 document.addEventListener("category-modal-close", () => {

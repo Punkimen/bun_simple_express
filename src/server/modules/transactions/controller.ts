@@ -68,7 +68,6 @@ class Transaction {
       id: uuidv4(),
       ...data,
     };
-
     try {
       const transaction =
         await db`INSERT INTO transactions (id, category_id, amount, date, note) VALUES (${newTransaction.id}, ${newTransaction.categoryId}, ${newTransaction.amount}, ${newTransaction.date}, ${newTransaction.note})  RETURNING *`;
@@ -110,7 +109,7 @@ class Transaction {
       };
 
       const result =
-        await db`UPDATE transactions SET category_id = ${updatedTransaction.categoryId}, amount = ${updatedTransaction.amount}, note = ${updatedTransaction.note} WHERE id = ${id} RETURNING *`;
+        await db`UPDATE transactions SET category_id = ${updatedTransaction.categoryId}, amount = ${updatedTransaction.amount}, note = ${updatedTransaction.note}, date = ${updatedTransaction.date} WHERE id = ${id} RETURNING *`;
 
       if (!result[0]) {
         throw new AppError("Failed to update transaction");
