@@ -1,43 +1,20 @@
-import db from "../../db/db";
-import { AppError, BadRequestError } from "../../utils/error";
+import { AppError } from "../../utils/error";
 
 class Users {
-  async createUser(name: string) {
-    try {
-      const newUser =
-        await db`INSERT INTO users (name) VALUES (${name}) RETURNING *`;
-      if (!newUser[0]) {
-        throw new AppError("Failed to create user", 500);
-      }
-
-      return newUser;
-    } catch (error: any) {
-      throw new AppError(JSON.stringify(error), 500);
-    }
+  async createUser(_name: string) {
+    throw new AppError("Not implemented", 501);
   }
+
   async getUsers() {
-    try {
-      const users = await db`SELECT * FROM users`;
-      return users;
-    } catch (error: any) {
-      throw new AppError(JSON.stringify(error), 500);
-    }
+    throw new AppError("Not implemented", 501);
   }
 
-  async getUserById(id?: string) {
-    if (!id) {
-      throw new BadRequestError("Id is not provide");
-    }
+  async getUserById(_id?: string) {
+    throw new AppError("Not implemented", 501);
+  }
 
-    try {
-      const user = await db`SELECT * FROM users WHERE id = ${id}`;
-      if (!user[0]) {
-        throw new AppError("User not found", 404);
-      }
-      return user[0];
-    } catch (error: any) {
-      throw new AppError(JSON.stringify(error), 500);
-    }
+  async deleteAllUsers() {
+    throw new AppError("Not implemented", 501);
   }
 }
 

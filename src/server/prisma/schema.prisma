@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Category {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  type         String?
+  transactions Transaction[]
+
+  @@map("categories")
+}
+
+model Transaction {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category_id String?   @db.Uuid
+  amount      Decimal   @db.Decimal(10, 2)
+  date        DateTime  @db.Date
+  note        String?
+  category    Category? @relation(fields: [category_id], references: [id])
+
+  @@map("transactions")
+}

@@ -1,25 +1,20 @@
-import db from "../../db/db";
+import { prisma } from "../../db/db";
 import type { TCategory } from "../../types/common.type";
 import { AppError } from "../../utils/error";
-import { v4 as uuidv4 } from "uuid";
 import { renderHtmlPart } from "../../utils/renderPage";
 
 class Categories {
   async getAllCategories(type?: TCategory["type"]) {
     try {
-      if (type) {
-        const categories =
-          await db`SELECT * FROM categories WHERE type = ${type}`;
-
-        return categories;
-      }
-      const categories = await db`SELECT * FROM categories`;
-
+      const categories = await prisma.category.findMany({
+        where: type ? { type } : undefined,
+      });
       return categories;
     } catch (error: any) {
       throw new AppError(error.message || "Failed to fetch categories");
     }
   }
+
   async renderOptions(type: TCategory["type"]) {
     const data = await this.getAllCategories(type);
     return await renderHtmlPart(
@@ -29,20 +24,14 @@ class Categories {
   }
 
   async createCategory(data: Omit<TCategory, "id">) {
-    const newCategory = {
-      id: uuidv4(),
-      ...data,
-    };
-
     try {
-      const category =
-        await db`INSERT INTO categories (id, name, type) VALUES (${newCategory.id}, ${newCategory.name}, ${newCategory.type})  RETURNING *`;
-
-      if (!category[0]) {
-        throw new AppError("Failed to create category");
-      }
-
-      return category[0];
+      const category = await prisma.category.create({
+        data: {
+          name: data.name,
+          type: data.type,
+        },
+      });
+      return category;
     } catch (error: any) {
       throw new AppError(error.message || "Failed to create category");
     }
@@ -52,15 +41,8 @@ class Categories {
     if (!categoryId) {
       throw new AppError("Category ID is required");
     }
-
     try {
-      const result =
-        await db`DELETE FROM categories WHERE id = ${categoryId} RETURNING *`;
-
-      if (!result[0]) {
-        throw new AppError("Category not found");
-      }
-
+      await prisma.category.delete({ where: { id: categoryId } });
       return { message: "Category deleted successfully" };
     } catch (error: any) {
       throw new AppError(error.message || "Failed to delete category");
@@ -71,16 +53,12 @@ class Categories {
     if (!categoryId || !newName) {
       throw new AppError("Category ID and new name are required");
     }
-
     try {
-      const result =
-        await db`UPDATE categories SET name = ${newName} WHERE id = ${categoryId} RETURNING *`;
-
-      if (!result[0]) {
-        throw new AppError("Category not found");
-      }
-
-      return result[0];
+      const result = await prisma.category.update({
+        where: { id: categoryId },
+        data: { name: newName },
+      });
+      return result;
     } catch (error: any) {
       throw new AppError(error.message || "Failed to update category");
     }
