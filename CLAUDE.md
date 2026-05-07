@@ -18,14 +18,14 @@ No test runner is configured.
 Requires a `.env` file with:
 
 - `DATABASE_URL` — PostgreSQL connection string (e.g. `postgresql://max@localhost:5432/budjet`)
-- `ADMIN_LOGIN` / `ADMIN_PASSWORD` — hardcoded single-user credentials
-- `AUTH_COOKIE_KEY` — value stored in the `auth` cookie to validate sessions
+- `JWT_ACCESS_SECRET` — secret for signing access JWT tokens
+- `JWT_REFRESH_SECRET` — secret for signing refresh JWT tokens
 
-Database schema is in `src/server/db/schema.sql`. Apply it manually via `psql`.
+Database schema is managed via Prisma (`src/server/prisma/schema.prisma`). Run migrations with `bunx prisma migrate dev`.
 
 ## Architecture
 
-This is a single-user personal budget tracker. There is no user table — authentication is a single admin login checked against env vars, with session state held in an `auth` cookie.
+This is a multi-user budget tracker. Users register and log in with email/password. Auth is JWT-based: a short-lived access token (httpOnly cookie) and a long-lived refresh token stored in the `refresh_tokens` table, supporting multiple concurrent sessions per user (multiple devices).
 
 ### Custom HTTP framework (`src/server/app.ts`)
 
@@ -48,11 +48,11 @@ Unmatched non-`/public` requests in the `fetch` fallback redirect to `/login` (s
 
 ### Auth middleware (`src/server/middlewares/authMiddleware.ts`)
 
-Applied globally. Public routes: `/login`, `/api/login`, `/public/*`. Unauthenticated API requests get 401 JSON; unauthenticated page requests get 302 to `/login`. Detects HTMX requests via `HX-Request` header and responds with `HX-Redirect` instead of 302.
+Applied globally. Public routes: `/login`, `/register`, `/api/login`, `/api/register`, `/public/*`. Validates the access JWT from the httpOnly cookie; on expiry, attempts silent refresh via the refresh token. Unauthenticated API requests get 401 JSON; unauthenticated page requests get 302 to `/login`. Detects HTMX requests via `HX-Request` header and responds with `HX-Redirect` instead of 302. On successful token validation, attaches `user_id` to the request context so controllers can scope queries to the current user.
 
 ### Module structure
 
-Each domain (transactions, categories, users, login) has a `routes.ts` and `controller.ts` under `src/server/modules/<name>/`. Controllers are plain classes exported as singletons. Routes are registered by calling `init*Routes(app)` in `src/server/index.ts`.
+Each domain (transactions, categories, users, auth) has a `routes.ts` and `controller.ts` under `src/server/modules/<name>/`. Controllers are plain classes exported as singletons. Routes are registered by calling `init*Routes(app)` in `src/server/index.ts`. The `auth` module handles registration, login, logout, and token refresh.
 
 ### Rendering
 
@@ -68,7 +68,7 @@ Alpine.js (`budgetApp`, `categoryForm`, `transactionForm` components) handles cl
 
 ### Database
 
-`src/server/db/db.ts` exports a single `Bun.SQL` instance. Queries use the tagged template literal syntax: `` db`SELECT ...` ``. Tables: `categories` (id, name, type) and `transactions` (id, category_id, amount, date, note).
+Managed via Prisma ORM. Schema: `src/server/prisma/schema.prisma`. Generated client: `src/server/generated/prisma`. Tables: `users` (id, name, email, password, created_at), `refresh_tokens` (id, token, user_id, expires_at, created_at), `categories` (id, name, type, user_id), `transactions` (id, category_id, amount, date, note, user_id). All data is scoped to `user_id` — queries must always filter by the authenticated user.
 
 ### Error handling
 

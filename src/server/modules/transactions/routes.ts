@@ -4,9 +4,11 @@ import { NotFoundError } from "../../utils/error.ts";
 import { renderHtmlPart } from "../../utils/renderPage";
 import { categoryController } from "../category/controller.ts";
 import { transactionController } from "./controller.ts";
+import { getUserId } from "../../utils/getUserId.ts";
 
 export const initTransactionsRoutes = (app: AppMethods) => {
   app.methodHtml("/api/renderTransactions", async (req) => {
+    const userId = getUserId(req);
     const url = new URL(req.url);
     const year = url.searchParams.get("year");
     const month = url.searchParams.get("month");
@@ -15,9 +17,9 @@ export const initTransactionsRoutes = (app: AppMethods) => {
     const filters = { year, month, categories };
 
     const [data, years, allCategories] = await Promise.all([
-      transactionController.getTransaction(filters),
-      transactionController.getTransactionYears(),
-      categoryController.getAllCategories(),
+      transactionController.getTransaction(userId, filters),
+      transactionController.getTransactionYears(userId),
+      categoryController.getAllCategories(userId),
     ]);
 
     return renderHtmlPart(
@@ -26,12 +28,17 @@ export const initTransactionsRoutes = (app: AppMethods) => {
     );
   });
 
-  app.methodGet("/transaction", () => transactionController.getTransaction());
+  app.methodGet("/transaction", (req) =>
+    transactionController.getTransaction(getUserId(req)),
+  );
 
   app.methodPost<Omit<TTransaction, "id">>("/api/transaction", async (req) => {
+    const userId = getUserId(req);
     const newTransaction = await req.json();
-    const result =
-      await transactionController.createTransaction(newTransaction);
+    const result = await transactionController.createTransaction(
+      newTransaction,
+      userId,
+    );
 
     return new Response(JSON.stringify(result), {
       headers: {
@@ -42,11 +49,12 @@ export const initTransactionsRoutes = (app: AppMethods) => {
   });
 
   app.methodDelete("/api/transaction/:id", async (req) => {
+    const userId = getUserId(req);
     const { id } = req.params;
     if (!id) {
       throw new NotFoundError("id is no found");
     }
-    const result = await transactionController.deleteTransaction(id);
+    const result = await transactionController.deleteTransaction(id, userId);
     return new Response(JSON.stringify(result), {
       headers: {
         "Content-Type": "application/json",
@@ -58,10 +66,13 @@ export const initTransactionsRoutes = (app: AppMethods) => {
   app.methodPut<
     { id: TTransaction["id"] } & Partial<Omit<TTransaction, "id" | "userId">>
   >("/api/transaction/:id", async (req) => {
+    const userId = getUserId(req);
     const { id } = req.params;
+    if (!id) throw new NotFoundError("id is not found");
     const updateData = await req.json();
     const result = await transactionController.updateTransaction(
       updateData,
+      userId,
       id,
     );
     return new Response(JSON.stringify(result), {

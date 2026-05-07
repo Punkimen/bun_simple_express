@@ -2,14 +2,12 @@ import { createApp } from "./app";
 import { initTransactionsRoutes } from "./modules/transactions/routes";
 import { initUsersRoutes } from "./modules/users/routes";
 import { initCategoryRoutes } from "./modules/category/routes";
-import { initLoginRoutes } from "./modules/login/routes";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import { renderHtml } from "./modules/html/renderHtml";
 const app = createApp();
 
 app.use(authMiddleware);
 
-initLoginRoutes(app);
 initUsersRoutes(app);
 initTransactionsRoutes(app);
 initCategoryRoutes(app);

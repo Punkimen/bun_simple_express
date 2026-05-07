@@ -1,14 +1,16 @@
 import type { BunRequest } from "bun";
+import { tokenController } from "../modules/auth/controller";
 
 class Auth {
-  isAuth(req: BunRequest) {
-    const cookies = req.cookies;
-    const key = cookies.get("auth");
-    if (key !== process.env.AUTH_COOKIE_KEY) {
+  async isAuth(req: BunRequest): Promise<boolean> {
+    const accessToken = req.cookies.get("access_token");
+    if (!accessToken) return false;
+    try {
+      await tokenController.verifyAccess(accessToken);
+      return true;
+    } catch {
       return false;
     }
-
-    return true;
   }
 }
 

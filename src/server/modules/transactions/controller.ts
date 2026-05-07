@@ -1,4 +1,4 @@
-import { prisma } from "../../db/db";
+import { prisma } from "../../prisma/db";
 import type { TTransaction } from "../../types/common.type";
 import { AppError, BadRequestError } from "../../utils/error";
 
@@ -14,9 +14,10 @@ type TTransactionChanged = Omit<TTransaction, "categoryId"> & {
 };
 
 class Transaction {
-  async getTransaction(filters?: TransactionFilters) {
+  async getTransaction(userId: string, filters?: TransactionFilters) {
     try {
       const rows = await prisma.transaction.findMany({
+        where: { user_id: userId },
         include: { category: true },
         orderBy: { date: "desc" },
       });
@@ -51,22 +52,23 @@ class Transaction {
     }
   }
 
-  async getTransactionYears(): Promise<number[]> {
+  async getTransactionYears(userId: string): Promise<number[]> {
     try {
       const rows = await prisma.transaction.findMany({
+        where: { user_id: userId },
         select: { date: true },
         orderBy: { date: "desc" },
       });
-      const years = [
-        ...new Set(rows.map((r) => r.date.getFullYear())),
-      ].sort((a, b) => b - a);
+      const years = [...new Set(rows.map((r) => r.date.getFullYear()))].sort(
+        (a, b) => b - a,
+      );
       return years;
     } catch (error: any) {
       throw new AppError(error.message || "Failed to fetch years");
     }
   }
 
-  async createTransaction(data: Omit<TTransaction, "id">) {
+  async createTransaction(data: Omit<TTransaction, "id">, userId: string) {
     if (!data) {
       throw new BadRequestError("Transaction data is required");
     }
@@ -77,6 +79,7 @@ class Transaction {
           amount: data.amount,
           date: new Date(data.date),
           note: data.note,
+          user_id: userId,
         },
       });
       return {
@@ -91,6 +94,7 @@ class Transaction {
 
   async updateTransaction(
     data: Partial<Omit<TTransaction, "id" | "userId">>,
+    userId: string,
     id?: TTransaction["id"],
   ) {
     if (!id) {
@@ -100,7 +104,9 @@ class Transaction {
       throw new BadRequestError("Amount can`t be is negative");
     }
     try {
-      const existing = await prisma.transaction.findUnique({ where: { id } });
+      const existing = await prisma.transaction.findUnique({
+        where: { id, user_id: userId },
+      });
       if (!existing) {
         throw new AppError("Transaction not found");
       }
@@ -123,12 +129,14 @@ class Transaction {
     }
   }
 
-  async deleteTransaction(id: TTransaction["id"]) {
+  async deleteTransaction(id: TTransaction["id"], userId: string) {
     if (!id) {
       throw new BadRequestError("Id is not found");
     }
     try {
-      const result = await prisma.transaction.delete({ where: { id } });
+      const result = await prisma.transaction.delete({
+        where: { id, user_id: userId },
+      });
       return {
         ...result,
         amount: Number(result.amount),

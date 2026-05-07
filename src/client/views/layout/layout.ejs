@@ -13,6 +13,9 @@
 </head>
 
 <body>
+  <% if (typeof userName !== 'undefined' && userName) { %>
+    <%- include('../partials/common/header.ejs', { userName }) %>
+  <% } %>
   <main class="app-main">
     <%- content %>
   </main>
