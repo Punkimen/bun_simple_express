@@ -47,13 +47,6 @@ class Users {
       headers: { "HX-Redirect": "/home" },
     });
   }
-  async getUsers() {
-    const users = await prisma.user.findMany({});
-    return users;
-  }
-  async deleteUser(id: string) {
-    return await prisma.user.delete({ where: { id } });
-  }
 }
 
 export const userController = new Users();

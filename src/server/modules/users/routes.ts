@@ -53,11 +53,4 @@ export const initUsersRoutes = (app: AppMethods) => {
       headers: { "HX-Redirect": "/login" },
     });
   });
-  app.methodGet("/test/users", async () => {
-    return await userController.getUsers();
-  });
-  app.methodGet("/test/deleteuser/:id", async (req) => {
-    const { id } = req.params;
-    return await userController.deleteUser(id);
-  });
 };
