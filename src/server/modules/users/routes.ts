@@ -54,10 +54,10 @@ export const initUsersRoutes = (app: AppMethods) => {
     });
   });
   app.methodGet("/test/users", async () => {
-    await userController.getUsers();
+    return await userController.getUsers();
   });
   app.methodGet("/test/deleteuser/:id", async (req) => {
     const { id } = req.params;
-    await userController.deleteUser(id);
+    return await userController.deleteUser(id);
   });
 };
