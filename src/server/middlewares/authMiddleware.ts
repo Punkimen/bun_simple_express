@@ -23,7 +23,8 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
     path === "/api/login" ||
     path === "/api/register" ||
     path === "/api/logout" ||
-    path.startsWith("/public");
+    path.startsWith("/public") ||
+    path.startsWith("/test");
 
   const accessToken = req.cookies.get("access_token");
   const refreshToken = req.cookies.get("refresh_token");
