@@ -20,7 +20,7 @@
     "@prisma/client": "^7.8.0",
     "@types/ejs": "^3.1.5",
     "alpinejs": "^3.15.11",
-    "auth_package": "link:../auth_package",
+    "auth_package": "../auth_package/",
     "dotenv": "^17.4.1",
     "ejs": "^5.0.1",
     "uuid": "^13.0.0"
