@@ -7,11 +7,37 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  email         String         @unique
+  password      String
+  created_at    DateTime       @default(now())
+  categories    Category[]
+  transactions  Transaction[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token      String   @unique
+  user_id    String   @db.Uuid
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
 model Category {
   id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
   type         String?
   transactions Transaction[]
+  user_id      String?       @db.Uuid
+  user         User?         @relation(fields: [user_id], references: [id])
 
   @@map("categories")
 }
@@ -23,6 +49,8 @@ model Transaction {
   date        DateTime  @db.Date
   note        String?
   category    Category? @relation(fields: [category_id], references: [id])
+  user        User?     @relation(fields: [user_id], references: [id])
+  user_id     String?   @db.Uuid
 
   @@map("transactions")
 }
