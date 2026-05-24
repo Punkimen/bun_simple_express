@@ -820,21 +820,122 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--text-muted);
 }
 
-.logout-btn {
+[x-cloak] { display: none !important; }
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   background: none;
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   color: var(--text-muted);
   font-size: 0.8125rem;
   font-weight: 500;
-  padding: 0.375rem 0.875rem;
+  padding: 0.375rem 0.75rem;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
 
-.logout-btn:hover {
+.user-menu-btn:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.user-menu-chevron {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.user-menu-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  right: 0;
+  z-index: 150;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 0.375rem;
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+}
+
+.user-dropdown-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.user-dropdown-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.user-dropdown-item--danger:hover {
   color: var(--expense);
-  border-color: var(--expense);
+  background: var(--expense-bg);
+}
+
+.modal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.modal-title--danger {
+  color: var(--expense);
+}
+
+.delete-account-warning {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.delete-account-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn--ghost:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn--danger {
+  background: var(--expense);
+}
+
+.btn--danger:hover {
+  background: #e11d48;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
 }
 
 /* ========================
