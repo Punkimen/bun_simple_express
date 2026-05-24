@@ -1,7 +1,8 @@
 import type { AppMethods } from "../../app";
 import { userController } from "./controller";
-import { BadRequestError } from "../../utils/error";
+import { BadRequestError, UnauthorizedError } from "../../utils/error";
 import { authController } from "../auth/controller";
+import { getUserId } from "../../utils/getUserId";
 
 export const initUsersRoutes = (app: AppMethods) => {
   app.methodPost<{
@@ -48,6 +49,57 @@ export const initUsersRoutes = (app: AppMethods) => {
       path: "/",
       maxAge: 0,
     });
+    return new Response(null, {
+      status: 200,
+      headers: { "HX-Redirect": "/login" },
+    });
+  });
+
+  app.methodPost<{
+    oldPass: string;
+    newPass: string;
+    confirmPass: string;
+  }>("/api/password-change", async (req) => {
+    const refreshToken = req.cookies.get("refresh_token");
+    const { oldPass, newPass, confirmPass } = await req.json();
+    const userId = getUserId(req);
+    if (refreshToken && userId) {
+      await userController.changePassword(
+        userId,
+        oldPass,
+        newPass,
+        confirmPass,
+        refreshToken,
+      );
+    }
+    req.cookies.set("access_token", "", {
+      httpOnly: true,
+      path: "/",
+      maxAge: 0,
+    });
+    req.cookies.set("refresh_token", "", {
+      httpOnly: true,
+      path: "/",
+      maxAge: 0,
+    });
+    return new Response(null, {
+      status: 200,
+      headers: { "HX-Redirect": "/login" },
+    });
+  });
+
+  app.methodDelete("/api/user/delete", async (req) => {
+    const userId = getUserId(req);
+
+    if (!userId) {
+      throw new UnauthorizedError("user id is not found");
+    }
+
+    await userController.deleteUser(userId);
+
+    req.cookies.set("access_token", "", { httpOnly: true, path: "/", maxAge: 0 });
+    req.cookies.set("refresh_token", "", { httpOnly: true, path: "/", maxAge: 0 });
+
     return new Response(null, {
       status: 200,
       headers: { "HX-Redirect": "/login" },

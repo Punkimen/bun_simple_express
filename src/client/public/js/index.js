@@ -91,6 +91,10 @@ document.addEventListener("click", (e) => {
         categoryTypeSelect.value = typeSelect.value;
       }
       openModal("category-modal");
+    } else if (modal === "changePassword") {
+      openModal("change-password-modal");
+    } else if (modal === "deleteAccount") {
+      openModal("delete-account-modal");
     }
     return;
   }

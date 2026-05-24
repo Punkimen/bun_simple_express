@@ -36,8 +36,8 @@ model Category {
   name         String
   type         String?
   transactions Transaction[]
-  user_id      String?       @db.Uuid
-  user         User?         @relation(fields: [user_id], references: [id])
+  user_id      String        @db.Uuid
+  user         User          @relation(fields: [user_id], references: [id])
 
   @@map("categories")
 }
@@ -49,8 +49,8 @@ model Transaction {
   date        DateTime  @db.Date
   note        String?
   category    Category? @relation(fields: [category_id], references: [id])
-  user        User?     @relation(fields: [user_id], references: [id])
-  user_id     String?   @db.Uuid
+  user        User      @relation(fields: [user_id], references: [id])
+  user_id     String    @db.Uuid
 
   @@map("transactions")
 }

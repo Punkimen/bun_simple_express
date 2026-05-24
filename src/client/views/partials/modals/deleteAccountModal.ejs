@@ -1,0 +1,11 @@
+<div id="delete-account-modal" class="modal-overlay modal-top">
+  <div class="modal-window">
+    <button class="modal-close" data-close-modal>✕</button>
+    <h2 class="modal-title modal-title--danger">Удалить аккаунт</h2>
+    <p class="delete-account-warning">Это действие необратимо. Все ваши данные, транзакции и категории будут удалены навсегда.</p>
+    <div class="delete-account-actions">
+      <button class="btn btn--ghost" data-close-modal>Отмена</button>
+      <button class="btn btn--danger" hx-delete="/api/user/delete">Удалить аккаунт</button>
+    </div>
+  </div>
+</div>

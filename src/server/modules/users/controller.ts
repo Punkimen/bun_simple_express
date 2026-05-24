@@ -47,6 +47,37 @@ class Users {
       headers: { "HX-Redirect": "/home" },
     });
   }
+
+  async changePassword(
+    userId: string,
+    oldPass: string,
+    newPass: string,
+    confirmPass: string,
+    refreshToken: string,
+  ) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestError("user not found");
+    }
+
+    const validPass = await passwordController.verify(oldPass, user.password);
+    if (!validPass || newPass !== confirmPass) {
+      throw new BadRequestError("passwords is not valid. Try again");
+    }
+
+    const hashPass = await passwordController.hash(newPass);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashPass },
+    });
+
+    await authController.logout(refreshToken);
+  }
+
+  async deleteUser(userId: string) {
+    await prisma.user.delete({ where: { id: userId } });
+  }
 }
 
 export const userController = new Users();
