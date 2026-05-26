@@ -9,7 +9,9 @@
         </svg>
       </button>
       <div class="user-dropdown" x-show="open" x-cloak>
+        <% if (hasPassword) { %>
         <button class="user-dropdown-item" data-open-modal="changePassword" @click="open = false">Сменить пароль</button>
+        <% } %>
         <button class="user-dropdown-item user-dropdown-item--danger" data-open-modal="deleteAccount" @click="open = false">Удалить аккаунт</button>
         <button class="user-dropdown-item user-dropdown-item--danger" hx-post="/api/logout" @click="open = false">Выйти</button>
       </div>

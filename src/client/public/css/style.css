@@ -779,6 +779,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(99, 102, 241, 0.06);
 }
 
+.login-btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 0.8125rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.login-btn-google:hover {
+  border-color: #4285F4;
+  color: #4285F4;
+  background: rgba(66, 133, 244, 0.06);
+}
+
 .login-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;

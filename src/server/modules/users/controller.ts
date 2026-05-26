@@ -56,8 +56,13 @@ class Users {
     refreshToken: string,
   ) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
+
     if (!user) {
       throw new BadRequestError("user not found");
+    }
+    
+    if(!user.password){
+      throw new BadRequestError("it`s oAuth accaunt")
     }
 
     const validPass = await passwordController.verify(oldPass, user.password);

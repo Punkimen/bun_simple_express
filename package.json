@@ -23,6 +23,7 @@
     "auth_package": "../auth_package/",
     "dotenv": "^17.4.1",
     "ejs": "^5.0.1",
+    "openid-client": "^6.8.4",
     "uuid": "^13.0.0"
   }
 }

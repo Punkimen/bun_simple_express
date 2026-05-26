@@ -23,6 +23,8 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
     path === "/api/login" ||
     path === "/api/register" ||
     path === "/api/logout" ||
+    path === "/api/getGoogleOauth" ||
+    path.startsWith("/auth/google/callback") ||
     path.startsWith("/public");
 
   const accessToken = req.cookies.get("access_token");
