@@ -23,6 +23,8 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
     path === "/api/login" ||
     path === "/api/register" ||
     path === "/api/logout" ||
+    path === "/api/getGoogleOauth" ||
+    path.startsWith("/auth/google/callback") ||
     path.startsWith("/public");
 
   const accessToken = req.cookies.get("access_token");
@@ -56,8 +58,9 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
       // refresh token invalid/revoked
     }
   }
-
+  console.log({ isPublicRoute }, !isPublicRoute, path);
   if (!isAuth && !isPublicRoute) {
+    console.log("w");
     const isHx = req.headers.get("HX-Request") === "true";
     if (path.startsWith("/api")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {

@@ -11,13 +11,26 @@ model User {
   id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String
   email         String         @unique
-  password      String
+  password      String?
   created_at    DateTime       @default(now())
   categories    Category[]
   transactions  Transaction[]
   refreshTokens RefreshToken[]
+  oauthAccounts OAuthAccount[]
 
   @@map("users")
+}
+
+model OAuthAccount {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  provider    String // "google" | "yandex" | "github"
+  provider_id String // sub из ID token (OIDC) или id из GitHub API
+  user_id     String   @db.Uuid
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+
+  @@unique([provider, provider_id])
+  @@map("oauth_accounts")
 }
 
 model RefreshToken {
