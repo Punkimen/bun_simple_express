@@ -7,9 +7,9 @@ import { tokenController } from "../auth/controller";
 
 class OAuthController {
   async authWithGoogle(req: Request) {
-    const config = await oAuthClient.getGoofleConfig();
+    const config = await oAuthClient.getGoogleConfig();
 
-    let redirect_uri = "http://localhost:3000/auth/google/callback";
+    let redirect_uri = process.env.GOOGLE_CALLBACK_URL || "";
     let scope = "openid email profile";
 
     let code_verifier = client.randomPKCECodeVerifier();
@@ -38,7 +38,6 @@ class OAuthController {
       `oauth_cv=${code_verifier}; HttpOnly; Path=/; Max-Age=600; SameSite=Lax`,
     );
     headers.append("Location", String(redirectTo));
-    console.log(redirectTo);
 
     return new Response(null, { status: 302, headers });
   }
@@ -48,23 +47,27 @@ class OAuthController {
     if (!code_verifer) {
       throw new UnauthorizedError("Missing OAuth code");
     }
-    const config = await oAuthClient.getGoofleConfig();
+    const config = await oAuthClient.getGoogleConfig();
     const tokens = await client.authorizationCodeGrant(
       config,
       new URL(req.url),
       { pkceCodeVerifier: code_verifer },
     );
-    console.log({ tokens });
+
     const claims = tokens.claims();
     if (!claims) {
       throw new BadRequestError("claims not found");
     }
-    console.log({ claims });
+
     const email = claims.email as string;
     const name = claims.name;
 
     const sub = claims.sub;
-    const userId = await this.findOrCreateUser(sub, email, (name as string) ?? email);
+    const userId = await this.findOrCreateUser(
+      sub,
+      email,
+      (name as string) ?? email,
+    );
 
     const accessToken = await tokenController.createAccessToken({ userId });
     const refreshToken = await tokenController.createRefreshToken(userId);
@@ -83,7 +86,11 @@ class OAuthController {
     return new Response(null, { status: 302, headers });
   }
 
-  private async findOrCreateUser(sub: string, email: string, name: string): Promise<string> {
+  private async findOrCreateUser(
+    sub: string,
+    email: string,
+    name: string,
+  ): Promise<string> {
     const existing = await prisma.oAuthAccount.findUnique({
       where: { provider_provider_id: { provider: "google", provider_id: sub } },
     });
@@ -94,7 +101,11 @@ class OAuthController {
 
     if (existingUser) {
       await prisma.oAuthAccount.create({
-        data: { provider: "google", provider_id: sub, user_id: existingUser.id },
+        data: {
+          provider: "google",
+          provider_id: sub,
+          user_id: existingUser.id,
+        },
       });
       return existingUser.id;
     }

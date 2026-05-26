@@ -10,7 +10,7 @@ class PrismaUser implements IUserRepository {
     return {
       id: user.id,
       email: user.email,
-      passwordHash: user.password,
+      passwordHash: user.password || "",
     };
   }
   async findById(id: string): Promise<StoredUser | null> {
@@ -23,7 +23,7 @@ class PrismaUser implements IUserRepository {
     return {
       id: user.id,
       email: user.email,
-      passwordHash: user.password,
+      passwordHash: user.password || "",
     };
   }
 }

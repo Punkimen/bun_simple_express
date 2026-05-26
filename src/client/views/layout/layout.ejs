@@ -14,7 +14,7 @@
 
 <body>
   <% if (typeof userName !== 'undefined' && userName) { %>
-    <%- include('../partials/common/header.ejs', { userName }) %>
+    <%- include('../partials/common/header.ejs', { userName, hasPassword }) %>
     <%- include('../partials/modals/changePasswordModal.ejs') %>
     <%- include('../partials/modals/deleteAccountModal.ejs') %>
   <% } %>

@@ -58,9 +58,8 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
       // refresh token invalid/revoked
     }
   }
-  console.log({ isPublicRoute }, !isPublicRoute, path);
+
   if (!isAuth && !isPublicRoute) {
-    console.log("w");
     const isHx = req.headers.get("HX-Request") === "true";
     if (path.startsWith("/api")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
