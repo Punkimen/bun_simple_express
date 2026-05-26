@@ -44,17 +44,34 @@ class OAuthController {
 
   async afterAuthGoogle(req: BunRequest) {
     const code_verifer = req.cookies.get("oauth_cv");
+    console.log("[oauth] callback req.url:", req.url);
+    console.log("[oauth] GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
+    console.log("[oauth] oauth_cv cookie present:", !!code_verifer);
+
     if (!code_verifer) {
       throw new UnauthorizedError("Missing OAuth code");
     }
+
+    const rawUrl = new URL(req.url);
+    const baseCallbackUrl = new URL(process.env.GOOGLE_CALLBACK_URL || req.url);
+    baseCallbackUrl.search = rawUrl.search;
+    console.log("[oauth] derived redirectUri for token exchange:", baseCallbackUrl.origin + baseCallbackUrl.pathname);
+
     const config = await oAuthClient.getGoogleConfig();
-    const tokens = await client.authorizationCodeGrant(
-      config,
-      new URL(req.url),
-      { pkceCodeVerifier: code_verifer },
-    );
+    let tokens: Awaited<ReturnType<typeof client.authorizationCodeGrant>>;
+    try {
+      tokens = await client.authorizationCodeGrant(
+        config,
+        baseCallbackUrl,
+        { pkceCodeVerifier: code_verifer },
+      );
+    } catch (err) {
+      console.error("[oauth] authorizationCodeGrant failed:", err);
+      throw err;
+    }
 
     const claims = tokens.claims();
+    console.log("[oauth] claims:", claims);
     if (!claims) {
       throw new BadRequestError("claims not found");
     }
