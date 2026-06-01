@@ -4,7 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мой бюджет</title>
+  <title>Budget</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/images/favicon-16x16.png">
+  <link rel="manifest" href="/public/images/site.webmanifest">
   <link rel="stylesheet" href="/public/css/style.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -13,14 +17,14 @@
 </head>
 
 <body>
-  <% if (typeof userName !== 'undefined' && userName) { %>
+  <% if (typeof userName !=='undefined' && userName) { %>
     <%- include('../partials/common/header.ejs', { userName, hasPassword }) %>
-    <%- include('../partials/modals/changePasswordModal.ejs') %>
-    <%- include('../partials/modals/deleteAccountModal.ejs') %>
-  <% } %>
-  <main class="app-main">
-    <%- content %>
-  </main>
+      <%- include('../partials/modals/changePasswordModal.ejs') %>
+        <%- include('../partials/modals/deleteAccountModal.ejs') %>
+          <% } %>
+            <main class="app-main">
+              <%- content %>
+            </main>
 </body>
 
 </html>

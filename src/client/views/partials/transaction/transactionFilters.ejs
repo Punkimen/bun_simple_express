@@ -4,7 +4,7 @@
     [5,'Май'],[6,'Июнь'],[7,'Июль'],[8,'Август'],
     [9,'Сентябрь'],[10,'Октябрь'],[11,'Ноябрь'],[12,'Декабрь']
   ];
-  const hasFilters = filters.year || filters.month || filters.categories.length > 0;
+  const hasFilters = filters.year != currentYear || filters.month != currentMonth || filters.categories.length > 0;
   const activeCatCount = filters.categories.length;
   const incomeCategories  = allCategories.filter(c => c.type === 'income');
   const expenseCategories = allCategories.filter(c => c.type === 'expense');

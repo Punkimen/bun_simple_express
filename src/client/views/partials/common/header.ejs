@@ -1,19 +1,27 @@
 <header class="site-header">
-  <div class="header-brand">💰 Мой бюджет</div>
+  <div class="header-brand">
+    <img src="/public/images/logo_budget.svg" />
+  </div>
   <div class="header-user" x-data="{ open: false }" @click.outside="open = false">
     <div class="user-menu">
       <button class="user-menu-btn" @click="open = !open">
-        <span class="header-username"><%= userName %></span>
-        <svg class="user-menu-chevron" :class="{ 'rotated': open }" width="12" height="8" viewBox="0 0 12 8" fill="none">
-          <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <span class="header-username">
+          <%= userName %>
+        </span>
+        <svg class="user-menu-chevron" :class="{ 'rotated': open }" width="12" height="8" viewBox="0 0 12 8"
+          fill="none">
+          <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
         </svg>
       </button>
       <div class="user-dropdown" x-show="open" x-cloak>
         <% if (hasPassword) { %>
-        <button class="user-dropdown-item" data-open-modal="changePassword" @click="open = false">Сменить пароль</button>
-        <% } %>
-        <button class="user-dropdown-item user-dropdown-item--danger" data-open-modal="deleteAccount" @click="open = false">Удалить аккаунт</button>
-        <button class="user-dropdown-item user-dropdown-item--danger" hx-post="/api/logout" @click="open = false">Выйти</button>
+          <button class="user-dropdown-item" data-open-modal="changePassword" @click="open = false">Сменить
+            пароль</button>
+          <% } %>
+            <button class="user-dropdown-item user-dropdown-item--danger" data-open-modal="deleteAccount"
+              @click="open = false">Удалить аккаунт</button>
+            <button class="user-dropdown-item user-dropdown-item--danger" hx-post="/api/logout"
+              @click="open = false">Выйти</button>
       </div>
     </div>
   </div>

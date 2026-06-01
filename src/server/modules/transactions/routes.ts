@@ -10,9 +10,17 @@ export const initTransactionsRoutes = (app: AppMethods) => {
   app.methodHtml("/api/renderTransactions", async (req) => {
     const userId = getUserId(req);
     const url = new URL(req.url);
-    const year = url.searchParams.get("year");
-    const month = url.searchParams.get("month");
+    const now = new Date();
+    const currentYear = String(now.getFullYear());
+    const currentMonth = String(now.getMonth() + 1);
+
+    const yearParam = url.searchParams.get("year");
+    const monthParam = url.searchParams.get("month");
     const categories = url.searchParams.getAll("categories");
+
+    // null = первая загрузка → дефолт на текущий месяц; "" = пользователь выбрал "Все"
+    const year = yearParam === null ? currentYear : yearParam || null;
+    const month = monthParam === null ? currentMonth : monthParam || null;
 
     const filters = { year, month, categories };
 
@@ -24,7 +32,7 @@ export const initTransactionsRoutes = (app: AppMethods) => {
 
     return renderHtmlPart(
       { clientPath: "views/partials/transaction/", name: "transactionsList" },
-      { data, filters, years, allCategories },
+      { data, filters, years, allCategories, currentYear, currentMonth },
     );
   });
 

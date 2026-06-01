@@ -16,13 +16,33 @@ type TTransactionChanged = Omit<TTransaction, "categoryId"> & {
 class Transaction {
   async getTransaction(userId: string, filters?: TransactionFilters) {
     try {
+      const dateFilter: { gte?: Date; lte?: Date } = {};
+
+      if (filters?.year) {
+        const year = Number(filters.year);
+        const month = filters.month ? Number(filters.month) : null;
+        if (month) {
+          dateFilter.gte = new Date(year, month - 1, 1);
+          dateFilter.lte = new Date(year, month, 0, 23, 59, 59, 999);
+        } else {
+          dateFilter.gte = new Date(year, 0, 1);
+          dateFilter.lte = new Date(year, 11, 31, 23, 59, 59, 999);
+        }
+      }
+
       const rows = await prisma.transaction.findMany({
-        where: { user_id: userId },
+        where: {
+          user_id: userId,
+          ...(dateFilter.gte && { date: dateFilter }),
+          ...(filters?.categories?.length && {
+            category_id: { in: filters.categories },
+          }),
+        },
         include: { category: true },
         orderBy: { date: "desc" },
       });
 
-      let result: TTransactionChanged[] = rows.map((t) => ({
+      return rows.map((t) => ({
         id: t.id,
         category_id: t.category_id,
         amount: Number(t.amount),
@@ -31,22 +51,6 @@ class Transaction {
         category_name: t.category?.name ?? null,
         type: (t.category?.type as TTransaction["type"]) ?? null,
       }));
-
-      if (filters?.year) {
-        const y = Number(filters.year);
-        result = result.filter((t) => new Date(t.date).getFullYear() === y);
-      }
-      if (filters?.month) {
-        const m = Number(filters.month);
-        result = result.filter((t) => new Date(t.date).getMonth() + 1 === m);
-      }
-      if (filters?.categories?.length) {
-        result = result.filter((t) =>
-          filters.categories!.includes(t.category_id ?? ""),
-        );
-      }
-
-      return result.sort((a, b) => (a.date > b.date ? 1 : 0));
     } catch (error: any) {
       throw new AppError(error.message || "Failed to fetch transactions");
     }
@@ -73,6 +77,9 @@ class Transaction {
       throw new BadRequestError("Transaction data is required");
     }
     try {
+      if (data.amount > 99999999.99) {
+        throw new BadRequestError("Amount is to big");
+      }
       const transaction = await prisma.transaction.create({
         data: {
           category_id: data.categoryId,
