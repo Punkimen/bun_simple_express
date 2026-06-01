@@ -1,41 +1,48 @@
 /* ========================
    Reset & CSS Variables
    ======================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 :root {
-  --bg:          #0f172a;
-  --surface:     #1e293b;
-  --surface-2:   #263245;
-  --border:      #334155;
-  --text:        #f1f5f9;
-  --text-muted:  #94a3b8;
-  --text-dim:    #475569;
-  --income:      #22c55e;
-  --income-bg:   rgba(34, 197, 94, 0.12);
-  --income-bd:   rgba(34, 197, 94, 0.3);
-  --expense:     #f43f5e;
-  --expense-bg:  rgba(244, 63, 94, 0.12);
-  --expense-bd:  rgba(244, 63, 94, 0.3);
-  --primary:     #6366f1;
-  --primary-h:   #4f46e5;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #263245;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
+  --income: #22c55e;
+  --income-bg: rgba(34, 197, 94, 0.12);
+  --income-bd: rgba(34, 197, 94, 0.3);
+  --expense: #f43f5e;
+  --expense-bg: rgba(244, 63, 94, 0.12);
+  --expense-bd: rgba(244, 63, 94, 0.3);
+  --primary: #6366f1;
+  --primary-h: #4f46e5;
   --primary-glow: rgba(99, 102, 241, 0.35);
-  --r:           12px;
-  --r-sm:        8px;
-  --shadow:      0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
-  --shadow-lg:   0 10px 25px -5px rgba(0,0,0,0.5), 0 4px 10px -5px rgba(0,0,0,0.4);
+  --r: 12px;
+  --r-sm: 8px;
+  --shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg:
+    0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 4px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
-html { font-size: 16px; }
+html {
+  font-size: 16px;
+}
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   min-height: 100vh;
 }
@@ -81,7 +88,9 @@ body {
   color: var(--text);
   padding: 0.625rem 0.875rem;
   font-size: 0.9375rem;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
   outline: none;
   appearance: none;
 }
@@ -99,8 +108,14 @@ body {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.form-group input::placeholder { color: var(--text-dim); }
-.form-group select option { background: var(--surface); color: var(--text); }
+.form-group input::placeholder {
+  color: var(--text-dim);
+}
+
+.form-group select option {
+  background: var(--surface);
+  color: var(--text);
+}
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.6);
@@ -132,7 +147,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: color 0.15s;
 }
 
-.btn-link:hover { color: var(--primary-h); }
+.btn-link:hover {
+  color: var(--primary-h);
+}
 
 /* ========================
    Inline Category Form
@@ -155,7 +172,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .inline-form input:focus {
@@ -163,7 +182,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.inline-form input::placeholder { color: var(--text-dim); }
+.inline-form input::placeholder {
+  color: var(--text-dim);
+}
 
 .btn-inline {
   background: var(--primary);
@@ -178,7 +199,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: background 0.15s;
 }
 
-.btn-inline:hover { background: var(--primary-h); }
+.btn-inline:hover {
+  background: var(--primary-h);
+}
 
 /* ========================
    Category Pills
@@ -211,7 +234,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.1rem 0.2rem;
   border-radius: 50%;
   line-height: 1;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .category-pill-delete:hover {
@@ -234,7 +259,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
   margin-top: 0.25rem;
   background: var(--primary);
   color: #fff;
@@ -297,7 +325,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.25rem 0.5rem;
   border-radius: var(--r-sm);
   line-height: 1;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .modal-close:hover {
@@ -351,8 +381,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: border-color 0.15s;
 }
 
-.filter-select:focus { border-color: var(--primary); }
-.filter-select option { background: var(--surface); }
+.filter-select:focus {
+  border-color: var(--primary);
+}
+
+.filter-select option {
+  background: var(--surface);
+}
 
 .filter-group-categories {
   position: relative;
@@ -366,7 +401,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.45rem 0.875rem;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
   white-space: nowrap;
 }
 
@@ -398,9 +435,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-bottom: 1px solid var(--border);
 }
 
-.categories-group-label:first-child { margin-top: 0; }
-.categories-group-label.income  { color: var(--income); }
-.categories-group-label.expense { color: var(--expense); }
+.categories-group-label:first-child {
+  margin-top: 0;
+}
+
+.categories-group-label.income {
+  color: var(--income);
+}
+
+.categories-group-label.expense {
+  color: var(--expense);
+}
 
 .category-checkbox-label {
   display: flex;
@@ -413,7 +458,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: background 0.1s;
 }
 
-.category-checkbox-label:hover { background: var(--surface-2); }
+.category-checkbox-label:hover {
+  background: var(--surface-2);
+}
 
 .category-checkbox-label input[type="checkbox"] {
   accent-color: var(--primary);
@@ -443,7 +490,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.875rem;
   cursor: pointer;
   margin-top: auto;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
   white-space: nowrap;
 }
 
@@ -473,8 +522,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   overflow-x: auto;
 }
 
-.table-card.income  { border-top: 3px solid var(--income); }
-.table-card.expense { border-top: 3px solid var(--expense); }
+.table-card.income {
+  border-top: 3px solid var(--income);
+}
+
+.table-card.expense {
+  border-top: 3px solid var(--expense);
+}
 
 .table-head {
   display: flex;
@@ -500,8 +554,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 700;
 }
 
-.table-card.income  .table-total { color: var(--income); }
-.table-card.expense .table-total { color: var(--expense); }
+.table-card.income .table-total {
+  color: var(--income);
+}
+
+.table-card.expense .table-total {
+  color: var(--expense);
+}
 
 .btn-table-add {
   background: none;
@@ -512,7 +571,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 600;
   padding: 0.3rem 0.75rem;
   border-radius: var(--r-sm);
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
   white-space: nowrap;
 }
 
@@ -529,7 +591,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .data-table thead th {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-muted);
   font-weight: 600;
   font-size: 0.6875rem;
@@ -543,15 +605,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .data-table tbody td {
   padding: 0.6875rem 1rem;
-  border-bottom: 1px solid rgba(51,65,85,0.6);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
   color: var(--text);
   vertical-align: middle;
 }
 
-.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 .data-table tbody tr:hover td {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .data-table .col-amount {
@@ -559,8 +623,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   white-space: nowrap;
 }
 
-.table-card.income  .col-amount { color: var(--income); }
-.table-card.expense .col-amount { color: var(--expense); }
+.table-card.income .col-amount {
+  color: var(--income);
+}
+
+.table-card.expense .col-amount {
+  color: var(--expense);
+}
 
 .data-table .col-note {
   color: var(--text-muted);
@@ -571,7 +640,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   white-space: nowrap;
 }
 
-.data-table .col-date { white-space: nowrap; color: var(--text-muted); }
+.data-table .col-date {
+  white-space: nowrap;
+  color: var(--text-muted);
+}
 
 .data-table .col-cat {
   max-width: 110px;
@@ -580,10 +652,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   white-space: nowrap;
 }
 
-.data-table .col-action { width: 2rem; text-align: center; }
+.data-table .col-action {
+  width: 2rem;
+  text-align: center;
+}
 
-.tr-clickable { cursor: pointer; }
-.tr-clickable:hover td { background: var(--hover-bg, rgba(255,255,255,0.03)); }
+.tr-clickable {
+  cursor: pointer;
+}
+
+.tr-clickable:hover td {
+  background: var(--hover-bg, rgba(255, 255, 255, 0.03));
+}
 
 .btn-delete {
   background: none;
@@ -593,7 +673,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.75rem;
   padding: 0.25rem 0.375rem;
   border-radius: var(--r-sm);
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
   line-height: 1;
 }
 
@@ -609,7 +691,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.9375rem;
 }
 
-.empty-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
 
 /* ========================
    Login Page
@@ -620,7 +705,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 0%,
+      rgba(99, 102, 241, 0.15) 0%,
+      transparent 70%);
 }
 
 .login-card {
@@ -655,7 +742,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-bottom: 2rem;
 }
 
-.login-form .form-group { margin-bottom: 1rem; }
+.login-form .form-group {
+  margin-bottom: 1rem;
+}
 
 .login-form .form-group label {
   display: block;
@@ -674,7 +763,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .login-form input:focus {
@@ -682,7 +773,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.login-form input::placeholder { color: var(--text-dim); }
+.login-form input::placeholder {
+  color: var(--text-dim);
+}
 
 .login-btn {
   width: 100%;
@@ -695,7 +788,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 600;
   cursor: pointer;
   margin-top: 1.5rem;
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .login-btn:hover {
@@ -754,7 +850,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .login-divider::before,
 .login-divider::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: var(--border);
@@ -770,7 +866,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.9375rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 
 .login-btn-secondary:hover {
@@ -794,12 +893,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 
 .login-btn-google:hover {
-  border-color: #4285F4;
-  color: #4285F4;
+  border-color: #4285f4;
+  color: #4285f4;
   background: rgba(66, 133, 244, 0.06);
 }
 
@@ -827,10 +929,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .header-brand {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
+  max-width: 7rem;
+  width: 100%;
+}
+
+.header-brand img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .header-user {
@@ -844,7 +950,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--text-muted);
 }
 
-[x-cloak] { display: none !important; }
+[x-cloak] {
+  display: none !important;
+}
 
 .user-menu {
   position: relative;
@@ -862,7 +970,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 500;
   padding: 0.375rem 0.75rem;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .user-menu-btn:hover {
@@ -904,7 +1014,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.5rem 0.75rem;
   text-align: left;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .user-dropdown-item:hover {
@@ -962,14 +1074,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
 }
 
+.field-error {
+  color: var(--expense);
+}
+
 /* ========================
    Responsive
    ======================== */
 @media (max-width: 900px) {
-  .tables-grid { grid-template-columns: 1fr; }
+  .tables-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
-  .page-wrapper { padding: 1rem; }
-  .filters-bar  { gap: 0.5rem; }
+  .page-wrapper {
+    padding: 1rem;
+  }
+
+  .filters-bar {
+    gap: 0.5rem;
+  }
 }

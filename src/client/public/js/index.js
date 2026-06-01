@@ -155,6 +155,55 @@ document.addEventListener("click", (e) => {
   }
 });
 
+const AMOUNT_MAX = 9999999999.99;
+// up to 10 digits before decimal, up to 2 after
+const AMOUNT_FORMAT = /^\d{0,10}(\.\d{0,2})?$/;
+
+function setupAmountValidation() {
+  const input = document.querySelector('#transaction-form input[name="amount"]');
+  if (!input) return;
+
+  // Clone to prevent duplicate listeners on repeated calls
+  const fresh = input.cloneNode(true);
+  input.replaceWith(fresh);
+
+  let errorEl = fresh.parentElement.querySelector(".amount-error");
+  if (!errorEl) {
+    errorEl = document.createElement("span");
+    errorEl.className = "amount-error field-error";
+    errorEl.style.display = "none";
+    fresh.parentElement.appendChild(errorEl);
+  }
+
+  let lastValid = "";
+
+  fresh.addEventListener("input", () => {
+    const val = fresh.value;
+    const formatOk = AMOUNT_FORMAT.test(val);
+    const num = parseFloat(val);
+    const valueOk = !val || isNaN(num) || num <= AMOUNT_MAX;
+
+    if (!formatOk || !valueOk) {
+      fresh.value = lastValid;
+      if (!valueOk) {
+        errorEl.textContent = "Сумма не может превышать 99 999 999.99";
+        errorEl.style.display = "block";
+      }
+      return;
+    }
+
+    lastValid = val;
+    errorEl.style.display = "none";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", setupAmountValidation);
+document.addEventListener("htmx:afterSwap", (e) => {
+  if (e.detail.target.closest && e.detail.target.closest("#transaction-modal")) {
+    setupAmountValidation();
+  }
+});
+
 document.addEventListener("transaction-modal-close", () => {
   closeModal("transaction-modal");
   resetTransactionForm();
