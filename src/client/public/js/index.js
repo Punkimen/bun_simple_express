@@ -1,6 +1,24 @@
 "use strict";
 
 let _pendingCategoryId = null;
+let _initialMonthSynced = false;
+
+function getDefaultDate() {
+  return (
+    localStorage.getItem("lastTransactionDate") ||
+    new Date().toISOString().split("T")[0]
+  );
+}
+
+function syncMonthFilter(dateStr) {
+  const month = parseInt(dateStr.split("-")[1], 10);
+  const monthFilter = document.getElementById("month-filter");
+  if (!monthFilter) return;
+  if (parseInt(monthFilter.value, 10) !== month) {
+    monthFilter.value = String(month);
+    applyFilters();
+  }
+}
 
 function openModal(id) {
   const modal = document.getElementById(id);
@@ -28,6 +46,19 @@ document.addEventListener("htmx:afterSwap", (e) => {
   if (e.detail.target.id === "category-select" && _pendingCategoryId) {
     e.detail.target.value = _pendingCategoryId;
     _pendingCategoryId = null;
+  }
+
+  if (e.detail.target.id === "transactions-container" && !_initialMonthSynced) {
+    _initialMonthSynced = true;
+    const savedDate = localStorage.getItem("lastTransactionDate");
+    if (savedDate) syncMonthFilter(savedDate);
+  }
+
+  if (
+    e.detail.target.closest &&
+    e.detail.target.closest("#transaction-modal")
+  ) {
+    setupAmountValidation();
   }
 });
 
@@ -79,6 +110,11 @@ document.addEventListener("click", (e) => {
         if (typeSelect && type) {
           typeSelect.value = type;
           typeSelect.dispatchEvent(new Event("change"));
+        }
+        const form = document.getElementById("transaction-form");
+        if (form) {
+          const dateInput = form.querySelector('[name="date"]');
+          if (dateInput) dateInput.value = getDefaultDate();
         }
       }
       openModal("transaction-modal");
@@ -139,7 +175,9 @@ document.addEventListener("click", (e) => {
     const form = document.getElementById("transaction-filters");
     if (!form) return;
     form.querySelectorAll("select").forEach((s) => (s.value = ""));
-    form.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
+    form
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((cb) => (cb.checked = false));
     applyFilters();
     return;
   }
@@ -160,7 +198,9 @@ const AMOUNT_MAX = 9999999999.99;
 const AMOUNT_FORMAT = /^\d{0,10}(\.\d{0,2})?$/;
 
 function setupAmountValidation() {
-  const input = document.querySelector('#transaction-form input[name="amount"]');
+  const input = document.querySelector(
+    '#transaction-form input[name="amount"]',
+  );
   if (!input) return;
 
   // Clone to prevent duplicate listeners on repeated calls
@@ -197,10 +237,23 @@ function setupAmountValidation() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", setupAmountValidation);
-document.addEventListener("htmx:afterSwap", (e) => {
-  if (e.detail.target.closest && e.detail.target.closest("#transaction-modal")) {
-    setupAmountValidation();
+document.addEventListener("htmx:beforeRequest", (e) => {
+  const elt = e.detail.elt;
+  if (!elt || elt.id !== "transaction-form" || elt.hasAttribute("hx-put"))
+    return;
+  const dateInput = elt.querySelector('[name="date"]');
+  if (dateInput && dateInput.value) {
+    localStorage.setItem("lastTransactionDate", dateInput.value);
+    syncMonthFilter(dateInput.value);
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupAmountValidation();
+  const savedDate = localStorage.getItem("lastTransactionDate");
+  if (savedDate) {
+    const dateInput = document.querySelector('#transaction-form [name="date"]');
+    if (dateInput) dateInput.value = savedDate;
   }
 });
 
