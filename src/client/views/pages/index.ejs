@@ -6,6 +6,7 @@ include('../partials/modals/categoryModal.ejs') %>
     id="transactions-container"
     hx-get="/api/renderTransactions"
     hx-trigger="load, transactionCreated from:body"
+    hx-include="#transaction-filters"
     hx-target="this"
     hx-swap="innerHTML"
   ></div>

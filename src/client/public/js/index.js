@@ -33,12 +33,15 @@ function closeModal(id) {
 function resetTransactionForm() {
   const form = document.getElementById("transaction-form");
   const submitBtn = document.getElementById("transaction-submit-btn");
+
   if (!form) return;
+
   if (form.hasAttribute("hx-put")) {
     form.removeAttribute("hx-put");
     form.setAttribute("hx-post", "/api/transaction");
     htmx.process(form);
   }
+
   if (submitBtn) submitBtn.textContent = "Создать";
 }
 
@@ -254,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedDate) {
     const dateInput = document.querySelector('#transaction-form [name="date"]');
     if (dateInput) dateInput.value = savedDate;
+    syncMonthFilter(savedDatge)
   }
 });
 
