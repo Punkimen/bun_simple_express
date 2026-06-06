@@ -39,7 +39,7 @@ class Transaction {
           }),
         },
         include: { category: true },
-        orderBy: { date: "desc" },
+        orderBy: [{ date: "desc" }, { created_at: "desc" }],
       });
 
       return rows.map((t) => ({

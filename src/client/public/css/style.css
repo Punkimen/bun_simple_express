@@ -725,6 +725,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   text-align: center;
   margin-bottom: 0.625rem;
   line-height: 1;
+  max-width: 7rem;
+  margin: 0 auto 1rem;
+}
+
+.login-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .login-title {

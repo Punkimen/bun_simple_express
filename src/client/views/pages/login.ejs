@@ -8,8 +8,9 @@
     regConfirm: '',
     get passwordMismatch() { return this.regConfirm.length > 0 && this.regPassword !== this.regConfirm }
   }">
-    <div class="login-logo">💰</div>
-    <h1 class="login-title">Мой бюджет</h1>
+    <div class="login-logo">
+    <img src="/public/images/logo_budget.svg" />
+    </div>
 
     <!-- Login form -->
     <div x-show="mode === 'login'">

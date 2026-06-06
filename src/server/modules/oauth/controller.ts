@@ -44,10 +44,6 @@ class OAuthController {
 
   async afterAuthGoogle(req: BunRequest) {
     const code_verifer = req.cookies.get("oauth_cv");
-    console.log("[oauth] callback req.url:", req.url);
-    console.log("[oauth] GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
-    console.log("[oauth] oauth_cv cookie present:", !!code_verifer);
-
     if (!code_verifer) {
       throw new UnauthorizedError("Missing OAuth code");
     }
@@ -55,7 +51,6 @@ class OAuthController {
     const rawUrl = new URL(req.url);
     const baseCallbackUrl = new URL(process.env.GOOGLE_CALLBACK_URL || req.url);
     baseCallbackUrl.search = rawUrl.search;
-    console.log("[oauth] derived redirectUri for token exchange:", baseCallbackUrl.origin + baseCallbackUrl.pathname);
 
     const config = await oAuthClient.getGoogleConfig();
     let tokens: Awaited<ReturnType<typeof client.authorizationCodeGrant>>;
@@ -71,7 +66,6 @@ class OAuthController {
     }
 
     const claims = tokens.claims();
-    console.log("[oauth] claims:", claims);
     if (!claims) {
       throw new BadRequestError("claims not found");
     }
