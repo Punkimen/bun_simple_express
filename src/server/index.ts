@@ -5,6 +5,7 @@ import { initCategoryRoutes } from "./modules/category/routes";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import { renderHtml } from "./modules/html/renderHtml";
 import { initOAuthRoutes } from "./modules/oauth/routes";
+import { initTransactionPlanningRoutes } from "./modules/transactionsPlanning/routes";
 const app = createApp();
 
 app.use(authMiddleware);
@@ -13,6 +14,7 @@ initUsersRoutes(app);
 initTransactionsRoutes(app);
 initCategoryRoutes(app);
 initOAuthRoutes(app);
+initTransactionPlanningRoutes(app);
 renderHtml(app);
 
 app.listen(3000, () => {

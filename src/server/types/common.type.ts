@@ -17,3 +17,12 @@ export type TCategory = {
   name: string;
   type: "income" | "expense";
 };
+
+export type TTransactionPlanning = {
+  id: string;
+  categoryId: string;
+  amount: number;
+  month: number; // 1–12
+  year: number;
+  note?: string;
+};

@@ -705,9 +705,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: radial-gradient(ellipse at 50% 0%,
-      rgba(99, 102, 241, 0.15) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(99, 102, 241, 0.15) 0%,
+    transparent 70%
+  );
 }
 
 .login-card {
@@ -733,14 +735,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.login-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.25rem;
 }
 
 .login-sub {

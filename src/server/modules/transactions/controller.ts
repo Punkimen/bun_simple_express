@@ -8,11 +8,6 @@ type TransactionFilters = {
   categories?: string[];
 };
 
-type TTransactionChanged = Omit<TTransaction, "categoryId"> & {
-  category_id: string | null;
-  category_name: string | null;
-};
-
 class Transaction {
   async getTransaction(userId: string, filters?: TransactionFilters) {
     try {
