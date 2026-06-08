@@ -54,7 +54,7 @@ class TransactionPlanningController {
       throw new BadRequestError("Invalid month");
     if (!data.year || data.year < 2000 || data.year > 2100)
       throw new BadRequestError("Invalid year");
-    if (data.amount > 999999999.99)
+    if (data.amount > 99999999.99)
       throw new BadRequestError("Amount is too big");
 
     try {
