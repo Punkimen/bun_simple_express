@@ -30,6 +30,33 @@ function closeModal(id) {
   if (modal) modal.classList.remove("is-open");
 }
 
+function applyStatsFilters() {
+  const form = document.getElementById("statistics-filters");
+  if (!form) return;
+  const params = new URLSearchParams(new FormData(form));
+  htmx.ajax("GET", `/api/renderStatistics?${params}`, {
+    target: "#statistics-container",
+    swap: "innerHTML",
+  });
+}
+
+function resetPlanningForm() {
+  const form = document.getElementById("planning-form");
+  const submitBtn = document.getElementById("planning-submit-btn");
+  const deleteBtn = document.getElementById("planning-delete-btn");
+
+  if (!form) return;
+
+  if (form.hasAttribute("hx-put")) {
+    form.removeAttribute("hx-put");
+    form.setAttribute("hx-post", "/api/transaction-planning");
+    htmx.process(form);
+  }
+
+  if (submitBtn) submitBtn.textContent = "Создать";
+  if (deleteBtn) deleteBtn.style.display = "none";
+}
+
 function resetTransactionForm() {
   const form = document.getElementById("transaction-form");
   const submitBtn = document.getElementById("transaction-submit-btn");
@@ -121,6 +148,54 @@ document.addEventListener("click", (e) => {
         }
       }
       openModal("transaction-modal");
+    } else if (modal === "planning") {
+      const planningId   = openBtn.dataset.planningId;
+      const categoryId   = openBtn.dataset.categoryId;
+      const categoryName = openBtn.dataset.categoryName;
+      const amount       = openBtn.dataset.planningAmount;
+      const note         = openBtn.dataset.planningNote;
+      const month        = openBtn.dataset.planningMonth;
+      const year         = openBtn.dataset.planningYear;
+
+      const form        = document.getElementById("planning-form");
+      const submitBtn   = document.getElementById("planning-submit-btn");
+      const deleteBtn   = document.getElementById("planning-delete-btn");
+      const titleEl     = document.getElementById("planning-modal-title");
+      const categoryEl  = document.getElementById("planning-category-display");
+
+      if (categoryEl)   categoryEl.textContent = categoryName || "";
+      if (form) {
+        form.querySelector('[name="categoryId"]').value = categoryId || "";
+        form.querySelector('[name="month"]').value      = month || "";
+        form.querySelector('[name="year"]').value       = year || "";
+        form.querySelector('[name="note"]').value       = note || "";
+        form.querySelector('[name="amount"]').value     = planningId ? (amount || "") : "";
+      }
+
+      if (planningId) {
+        if (titleEl)    titleEl.textContent = "Редактировать план";
+        if (submitBtn)  submitBtn.textContent = "Сохранить";
+        if (form) {
+          form.removeAttribute("hx-post");
+          form.setAttribute("hx-put", `/api/transaction-planning/${planningId}`);
+          htmx.process(form);
+        }
+        if (deleteBtn) {
+          deleteBtn.style.display = "block";
+          deleteBtn.setAttribute("hx-delete", `/api/transaction-planning/${planningId}`);
+          htmx.process(deleteBtn);
+        }
+      } else {
+        if (titleEl)    titleEl.textContent = "Создать план";
+        if (submitBtn)  submitBtn.textContent = "Создать";
+        if (form) {
+          form.removeAttribute("hx-put");
+          form.setAttribute("hx-post", "/api/transaction-planning");
+          htmx.process(form);
+        }
+        if (deleteBtn)  deleteBtn.style.display = "none";
+      }
+      openModal("planning-modal");
     } else if (modal === "category") {
       const typeSelect = document.getElementById("type-select");
       const categoryTypeSelect = document.getElementById(
@@ -144,6 +219,7 @@ document.addEventListener("click", (e) => {
     if (modal) {
       modal.classList.remove("is-open");
       if (modal.id === "transaction-modal") resetTransactionForm();
+      if (modal.id === "planning-modal") resetPlanningForm();
     }
     return;
   }
@@ -152,6 +228,7 @@ document.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal-overlay")) {
     e.target.classList.remove("is-open");
     if (e.target.id === "transaction-modal") resetTransactionForm();
+    if (e.target.id === "planning-modal") resetPlanningForm();
     return;
   }
 
@@ -165,7 +242,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // Apply category filter
+  // Apply category filter (main page)
   if (e.target.closest("[data-apply-categories]")) {
     const panel = document.getElementById("categories-panel");
     if (panel) panel.style.display = "none";
@@ -173,32 +250,41 @@ document.addEventListener("click", (e) => {
     return;
   }
 
+  // Apply category filter (statistics page)
+  if (e.target.closest("[data-apply-stats-categories]")) {
+    const panel = document.getElementById("stats-categories-panel");
+    if (panel) panel.style.display = "none";
+    applyStatsFilters();
+    return;
+  }
+
   // Reset all filters
   if (e.target.closest("[data-reset-filters]")) {
     const form = document.getElementById("transaction-filters");
     if (!form) return;
-    form.querySelectorAll("select").forEach((s) => (s.value = ""));
-    form
-      .querySelectorAll('input[type="checkbox"]')
-      .forEach((cb) => (cb.checked = false));
+    const now = new Date();
+    const yearSelect  = form.querySelector('[name="year"]');
+    const monthSelect = form.querySelector('[name="month"]');
+    if (yearSelect)  yearSelect.value  = String(now.getFullYear());
+    if (monthSelect) monthSelect.value = String(now.getMonth() + 1);
+    form.querySelectorAll('input[type="checkbox"]').forEach((cb) => (cb.checked = false));
+    localStorage.removeItem("lastTransactionDate");
     applyFilters();
     return;
   }
 
-  // Close categories panel on outside click
-  const panel = document.getElementById("categories-panel");
-  if (
-    panel &&
-    panel.style.display !== "none" &&
-    !e.target.closest(".filter-group-categories")
-  ) {
-    panel.style.display = "none";
+  // Close categories panels on outside click
+  if (!e.target.closest(".filter-group-categories")) {
+    const panel = document.getElementById("categories-panel");
+    if (panel && panel.style.display !== "none") panel.style.display = "none";
+    const statsPanel = document.getElementById("stats-categories-panel");
+    if (statsPanel && statsPanel.style.display !== "none") statsPanel.style.display = "none";
   }
 });
 
-const AMOUNT_MAX = 9999999999.99;
-// up to 10 digits before decimal, up to 2 after
-const AMOUNT_FORMAT = /^\d{0,10}(\.\d{0,2})?$/;
+const AMOUNT_MAX = 99999999.99;
+// up to 8 digits before decimal, up to 2 after
+const AMOUNT_FORMAT = /^\d{0,8}(\.\d{0,2})?$/;
 
 function setupAmountValidation() {
   const input = document.querySelector(
@@ -268,4 +354,9 @@ document.addEventListener("transaction-modal-close", () => {
 
 document.addEventListener("category-modal-close", () => {
   closeModal("category-modal");
+});
+
+document.addEventListener("planning-modal-close", () => {
+  closeModal("planning-modal");
+  resetPlanningForm();
 });

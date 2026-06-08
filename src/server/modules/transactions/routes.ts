@@ -18,7 +18,6 @@ export const initTransactionsRoutes = (app: AppMethods) => {
     const monthParam = url.searchParams.get("month");
     const categories = url.searchParams.getAll("categories");
 
-    // null = первая загрузка → дефолт на текущий месяц; "" = пользователь выбрал "Все"
     const year = yearParam === null ? currentYear : yearParam || null;
     const month = monthParam === null ? currentMonth : monthParam || null;
 

@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
-  email         String         @unique
-  password      String?
-  created_at    DateTime       @default(now())
-  categories    Category[]
-  transactions  Transaction[]
-  refreshTokens RefreshToken[]
-  oauthAccounts OAuthAccount[]
+  id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String
+  email                String                @unique
+  password             String?
+  created_at           DateTime              @default(now())
+  categories           Category[]
+  transactions         Transaction[]
+  refreshTokens        RefreshToken[]
+  oauthAccounts        OAuthAccount[]
+  transactionPlannings TransactionPlanning[]
 
   @@map("users")
 }
@@ -45,12 +46,13 @@ model RefreshToken {
 }
 
 model Category {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String
-  type         String?
-  transactions Transaction[]
-  user_id      String        @db.Uuid
-  user         User          @relation(fields: [user_id], references: [id])
+  id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String
+  type                 String?
+  transactions         Transaction[]
+  user_id              String                @db.Uuid
+  user                 User                  @relation(fields: [user_id], references: [id])
+  transactionPlannings TransactionPlanning[]
 
   @@map("categories")
 }
@@ -68,4 +70,19 @@ model Transaction {
   created_at DateTime @default(now())
 
   @@map("transactions")
+}
+
+model TransactionPlanning {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category_id String?   @db.Uuid
+  amount      Decimal   @db.Decimal(10, 2)
+  note        String?
+  date        DateTime  @db.Date
+  category    Category? @relation(fields: [category_id], references: [id])
+  user        User      @relation(fields: [user_id], references: [id])
+  user_id     String    @db.Uuid
+
+  created_at DateTime @default(now())
+
+  @@map("transactionsPlanning")
 }

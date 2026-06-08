@@ -20,7 +20,6 @@
             hx-swap="innerHTML"
             hx-include="#transaction-filters"
             hx-trigger="change delay:200ms">
-      <option value="">Все</option>
       <% years.forEach(y => { %>
         <option value="<%= y %>" <%= filters.year == y ? 'selected' : '' %>><%= y %></option>
       <% }) %>

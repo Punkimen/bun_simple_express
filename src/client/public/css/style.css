@@ -45,10 +45,12 @@ body {
     -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-main {
-  min-height: 100vh;
+  flex-grow: 1;
 }
 
 /* ========================
@@ -508,6 +510,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .table-card {
@@ -733,14 +736,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.login-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.25rem;
 }
 
 .login-sub {
@@ -1084,6 +1079,159 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .field-error {
   color: var(--expense);
+}
+
+/* ========================
+   Site Navigation
+   ======================== */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--r-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.nav-link--active {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.nav-link--active:hover {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* ========================
+   Statistics Tables
+   ======================== */
+.stats-fact-card {
+  border-top: 3px solid var(--primary);
+}
+
+.stats-plan-card {
+  border-top: 3px solid var(--text-dim);
+}
+
+.stats-totals {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.stats-total-income {
+  color: var(--income);
+}
+
+.stats-total-expense {
+  color: var(--expense);
+}
+
+.stats-total-sep {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.stats-section-row td {
+  padding: 0.4rem 1rem !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.stats-section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.stats-section-label--income {
+  color: var(--income);
+  background: var(--income-bg);
+  border-left: 3px solid var(--income);
+  padding-left: 0.75rem !important;
+}
+
+.stats-section-label--expense {
+  color: var(--expense);
+  background: var(--expense-bg);
+  border-left: 3px solid var(--expense);
+  padding-left: 0.75rem !important;
+}
+
+.col-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stats-income-amount {
+  color: var(--income);
+  font-weight: 700;
+}
+
+.stats-expense-amount {
+  color: var(--expense);
+  font-weight: 700;
+}
+
+.amount-zero {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* ========================
+   Statistics Summary
+   ======================== */
+.stats-summary-card {
+  border-top: 3px solid var(--primary);
+  margin-top: 0;
+}
+
+.data-table td.diff-good {
+  color: var(--income);
+  font-weight: 700;
+}
+
+.data-table td.diff-bad {
+  color: var(--expense);
+  font-weight: 700;
+}
+
+/* ========================
+   Planning Modal
+   ======================== */
+.planning-category-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.planning-form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
 /* ========================
