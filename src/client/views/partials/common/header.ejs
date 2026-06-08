@@ -2,6 +2,12 @@
   <div class="header-brand">
     <img src="/public/images/logo_budget.svg" />
   </div>
+
+  <nav class="site-nav">
+    <a href="/home" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'nav-link--active' : '' %>">Главная</a>
+    <a href="/statistics" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'statistics' ? 'nav-link--active' : '' %>">Статистика</a>
+  </nav>
+
   <div class="header-user" x-data="{ open: false }" @click.outside="open = false">
     <div class="user-menu">
       <button class="user-menu-btn" @click="open = !open">

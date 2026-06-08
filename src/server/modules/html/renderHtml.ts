@@ -11,6 +11,14 @@ export const renderHtml = async (app: AppMethods) => {
     const user = ctx?.userId
       ? await prisma.user.findUnique({ where: { id: ctx.userId }, select: { name: true, password: true } })
       : null;
-    return renderPage("index", { userName: user?.name ?? "", hasPassword: user?.password !== null });
+    return renderPage("index", { userName: user?.name ?? "", hasPassword: user?.password !== null, activePage: "home" });
+  });
+
+  app.methodHtml("/statistics", async (req) => {
+    const ctx = getRequestContext(req);
+    const user = ctx?.userId
+      ? await prisma.user.findUnique({ where: { id: ctx.userId }, select: { name: true, password: true } })
+      : null;
+    return renderPage("statistics", { userName: user?.name ?? "", hasPassword: user?.password !== null, activePage: "statistics" });
   });
 };

@@ -48,16 +48,13 @@ class TransactionPlanningController {
     }
   }
 
-  async createPlanning(
-    data: Omit<TTransactionPlanning, "id">,
-    userId: string,
-  ) {
+  async createPlanning(data: Omit<TTransactionPlanning, "id">, userId: string) {
     if (!data) throw new BadRequestError("Planning data is required");
     if (!data.month || data.month < 1 || data.month > 12)
       throw new BadRequestError("Invalid month");
     if (!data.year || data.year < 2000 || data.year > 2100)
       throw new BadRequestError("Invalid year");
-    if (data.amount > 99999999.99)
+    if (data.amount > 999999999.99)
       throw new BadRequestError("Amount is too big");
 
     try {
@@ -98,8 +95,7 @@ class TransactionPlanningController {
       });
       if (!existing) throw new AppError("Planning not found");
 
-      const month =
-        data.month ?? existing.date.getMonth() + 1;
+      const month = data.month ?? existing.date.getMonth() + 1;
       const year = data.year ?? existing.date.getFullYear();
       const date = new Date(year, month - 1, 1);
 

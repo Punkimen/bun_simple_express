@@ -1,0 +1,42 @@
+<div id="planning-modal" class="modal-overlay">
+  <div class="modal-window">
+    <button class="modal-close" data-close-modal>✕</button>
+    <h2 id="planning-modal-title" class="modal-title">Создать план</h2>
+
+    <div class="form-group">
+      <label>Категория</label>
+      <div id="planning-category-display" class="planning-category-name"></div>
+    </div>
+
+    <form id="planning-form" class="transaction-form"
+      hx-post="/api/transaction-planning"
+      hx-swap="none"
+      hx-ext="json-enc"
+      hx-on:htmx:after-request="if(event.detail.successful) { document.dispatchEvent(new CustomEvent('planning-modal-close')) }">
+
+      <input type="hidden" name="categoryId" />
+      <input type="hidden" name="month" />
+      <input type="hidden" name="year" />
+
+      <div class="form-group">
+        <label>Сумма</label>
+        <input type="text" inputmode="decimal" name="amount" required placeholder="0.00" />
+      </div>
+
+      <div class="form-group">
+        <label>Заметка</label>
+        <input type="text" name="note" />
+      </div>
+
+      <div class="planning-form-actions">
+        <button id="planning-submit-btn" class="btn">Создать</button>
+        <button id="planning-delete-btn" type="button" class="btn btn--danger" style="display:none"
+          hx-swap="none"
+          hx-confirm="Удалить план?"
+          hx-on:htmx:after-request="if(event.detail.successful) { document.dispatchEvent(new CustomEvent('planning-modal-close')) }">
+          Удалить
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

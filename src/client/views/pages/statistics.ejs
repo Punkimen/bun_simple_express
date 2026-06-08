@@ -1,0 +1,12 @@
+<%- include('../partials/modals/planningModal.ejs') %>
+
+<div class="page-wrapper">
+  <div
+    id="statistics-container"
+    hx-get="/api/renderStatistics"
+    hx-trigger="load, planningCreated from:body"
+    hx-include="#statistics-filters"
+    hx-target="this"
+    hx-swap="innerHTML"
+  ></div>
+</div>
