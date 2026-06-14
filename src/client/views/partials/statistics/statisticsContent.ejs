@@ -1,320 +1,326 @@
-<%
-  const MONTHS = [
-    [1,'Январь'],[2,'Февраль'],[3,'Март'],[4,'Апрель'],
-    [5,'Май'],[6,'Июнь'],[7,'Июль'],[8,'Август'],
-    [9,'Сентябрь'],[10,'Октябрь'],[11,'Ноябрь'],[12,'Декабрь']
-  ];
-
-  const incomeRows  = rows.filter(r => r.type === 'income');
+<% const MONTHS=[ [1,'Январь'],[2,'Февраль'],[3,'Март'],[4,'Апрель'], [5,'Май'],[6,'Июнь'],[7,'Июль'],[8,'Август'],
+  [9,'Сентябрь'],[10,'Октябрь'],[11,'Ноябрь'],[12,'Декабрь'] ]; const incomeRows=rows.filter(r=> r.type === 'income');
   const expenseRows = rows.filter(r => r.type === 'expense');
 
-  const totalActualIncome   = incomeRows.reduce((s, r)  => s + r.actual,  0);
-  const totalActualExpense  = expenseRows.reduce((s, r) => s + r.actual,  0);
-  const totalPlannedIncome  = incomeRows.reduce((s, r)  => s + r.planned, 0);
+  const totalActualIncome = incomeRows.reduce((s, r) => s + r.actual, 0);
+  const totalActualExpense = expenseRows.reduce((s, r) => s + r.actual, 0);
+  const totalPlannedIncome = incomeRows.reduce((s, r) => s + r.planned, 0);
   const totalPlannedExpense = expenseRows.reduce((s, r) => s + r.planned, 0);
 
-  const activeCatCount       = selectedCategories.length;
-  const incomeCategories     = allCategories.filter(c => c.type === 'income');
-  const expenseCategories    = allCategories.filter(c => c.type === 'expense');
+  const activeCatCount = selectedCategories.length;
+  const incomeCategories = allCategories.filter(c => c.type === 'income');
+  const expenseCategories = allCategories.filter(c => c.type === 'expense');
 
   function fmtAmount(n) {
-    return new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 2, maximumFractionDigits: 2
-    }).format(n);
+  return new Intl.NumberFormat('ru-RU', {
+  minimumFractionDigits: 2, maximumFractionDigits: 2
+  }).format(n);
   }
-%>
+  %>
 
-<!-- ===== FILTERS ===== -->
-<form id="statistics-filters" class="filters-bar">
+  <!-- ===== FILTERS ===== -->
+  <form id="statistics-filters" class="filters-bar">
 
-  <div class="filter-group">
-    <label class="filter-label">Год</label>
-    <select name="year" class="filter-select"
-            hx-get="/api/renderStatistics"
-            hx-target="#statistics-container"
-            hx-swap="innerHTML"
-            hx-include="#statistics-filters"
-            hx-trigger="change delay:200ms">
-      <% years.forEach(y => { %>
-        <option value="<%= y %>" <%= year == y ? 'selected' : '' %>><%= y %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label class="filter-label">Месяц</label>
-    <select name="month" class="filter-select"
-            hx-get="/api/renderStatistics"
-            hx-target="#statistics-container"
-            hx-swap="innerHTML"
-            hx-include="#statistics-filters"
-            hx-trigger="change delay:200ms">
-      <% MONTHS.forEach(([val, label]) => { %>
-        <option value="<%= val %>" <%= month == val ? 'selected' : '' %>><%= label %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group filter-group-categories">
-    <label class="filter-label">Категории</label>
-    <button type="button"
-            class="filter-categories-btn <%= activeCatCount > 0 ? 'has-active' : '' %>"
-            data-toggle="stats-categories-panel">
-      <%= activeCatCount > 0 ? `Выбрано: ${activeCatCount}` : 'Все' %> ▾
-    </button>
-
-    <div id="stats-categories-panel" class="categories-panel" style="display:none">
-      <% if (allCategories.length === 0) { %>
-        <span class="categories-empty">Нет категорий</span>
-      <% } else { %>
-        <% if (incomeCategories.length > 0) { %>
-          <div class="categories-group-label income">Доходы</div>
-          <% incomeCategories.forEach(cat => { %>
-            <label class="category-checkbox-label">
-              <input type="checkbox" name="categories" value="<%= cat.id %>"
-                <%= selectedCategories.includes(cat.id) ? 'checked' : '' %>>
-              <span><%= cat.name %></span>
-            </label>
+    <div class="filter-group">
+      <label class="filter-label">Год</label>
+      <select name="year" class="filter-select" hx-get="/api/renderStatistics" hx-target="#statistics-container"
+        hx-swap="innerHTML" hx-include="#statistics-filters" hx-trigger="change delay:200ms">
+        <% years.forEach(y=> { %>
+          <option value="<%= y %>" <%=year==y ? 'selected' : '' %>><%= y %>
+          </option>
           <% }) %>
-        <% } %>
-        <% if (expenseCategories.length > 0) { %>
-          <div class="categories-group-label expense">Расходы</div>
-          <% expenseCategories.forEach(cat => { %>
-            <label class="category-checkbox-label">
-              <input type="checkbox" name="categories" value="<%= cat.id %>"
-                <%= selectedCategories.includes(cat.id) ? 'checked' : '' %>>
-              <span><%= cat.name %></span>
-            </label>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Месяц</label>
+      <select name="month" class="filter-select" hx-get="/api/renderStatistics" hx-target="#statistics-container"
+        hx-swap="innerHTML" hx-include="#statistics-filters" hx-trigger="change delay:200ms">
+        <% MONTHS.forEach(([val, label])=> { %>
+          <option value="<%= val %>" <%=month==val ? 'selected' : '' %>><%= label %>
+          </option>
           <% }) %>
-        <% } %>
-        <div class="categories-panel-footer">
-          <button type="button" class="btn-inline" data-apply-stats-categories>Применить</button>
+      </select>
+    </div>
+
+    <div class="filter-group filter-group-categories">
+      <label class="filter-label">Категории</label>
+      <button type="button" class="filter-categories-btn <%= activeCatCount > 0 ? 'has-active' : '' %>"
+        data-toggle="stats-categories-panel">
+        <%= activeCatCount> 0 ? `Выбрано: ${activeCatCount}` : 'Все' %> ▾
+      </button>
+
+      <div id="stats-categories-panel" class="categories-panel" style="display:none">
+        <% if (allCategories.length===0) { %>
+          <span class="categories-empty">Нет категорий</span>
+          <% } else { %>
+            <% if (incomeCategories.length> 0) { %>
+              <div class="categories-group-label income">Доходы</div>
+              <% incomeCategories.forEach(cat=> { %>
+                <label class="category-checkbox-label">
+                  <input type="checkbox" name="categories" value="<%= cat.id %>" <%=selectedCategories.includes(cat.id)
+                    ? 'checked' : '' %>>
+                  <span>
+                    <%= cat.name %>
+                  </span>
+                </label>
+                <% }) %>
+                  <% } %>
+                    <% if (expenseCategories.length> 0) { %>
+                      <div class="categories-group-label expense">Расходы</div>
+                      <% expenseCategories.forEach(cat=> { %>
+                        <label class="category-checkbox-label">
+                          <input type="checkbox" name="categories" value="<%= cat.id %>"
+                            <%=selectedCategories.includes(cat.id) ? 'checked' : '' %>>
+                          <span>
+                            <%= cat.name %>
+                          </span>
+                        </label>
+                        <% }) %>
+                          <% } %>
+                            <div class="categories-panel-footer">
+                              <button type="button" class="btn-inline" data-apply-stats-categories>Применить</button>
+                            </div>
+                            <% } %>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ===== TABLES ===== -->
+  <div class="tables-grid">
+
+    <!-- ACTUAL -->
+    <div class="table-card stats-fact-card">
+      <div class="table-head">
+        <span class="table-title">Факт</span>
+        <div class="table-head-right stats-totals">
+          <span class="stats-total-income">+ <%= fmtAmount(totalActualIncome) %></span>
+          <span class="stats-total-sep">/</span>
+          <span class="stats-total-expense">− <%= fmtAmount(totalActualExpense) %></span>
         </div>
+      </div>
+
+      <% if (rows.length===0) { %>
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          Нет категорий
+        </div>
+        <% } else { %>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Категория</th>
+                  <th class="col-num">Сумма</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (incomeRows.length> 0) { %>
+                  <tr class="stats-section-row">
+                    <td colspan="2" class="stats-section-label stats-section-label--income">Доходы</td>
+                  </tr>
+                  <% incomeRows.forEach(r=> { %>
+                    <tr data-row-type="income">
+                      <td class="col-cat">
+                        <%= r.category_name %>
+                      </td>
+                      <td class="col-amount col-num stats-income-amount">
+                        <% if (r.actual> 0) { %>+ <%= fmtAmount(r.actual) %>
+                            <% } else { %><span class="amount-zero">—</span>
+                              <% } %>
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } %>
+                        <% if (expenseRows.length> 0) { %>
+                          <tr class="stats-section-row">
+                            <td colspan="2" class="stats-section-label stats-section-label--expense">Расходы</td>
+                          </tr>
+                          <% expenseRows.forEach(r=> { %>
+                            <tr data-row-type="expense">
+                              <td class="col-cat">
+                                <%= r.category_name %>
+                              </td>
+                              <td class="col-amount col-num stats-expense-amount">
+                                <% if (r.actual> 0) { %>− <%= fmtAmount(r.actual) %>
+                                    <% } else { %><span class="amount-zero">—</span>
+                                      <% } %>
+                              </td>
+                            </tr>
+                            <% }) %>
+                              <% } %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+
+    <!-- PLANNED -->
+    <div class="table-card stats-plan-card">
+      <div class="table-head">
+        <span class="table-title">План</span>
+        <div class="table-head-right stats-totals">
+          <span class="stats-total-income">+ <%= fmtAmount(totalPlannedIncome) %></span>
+          <span class="stats-total-sep">/</span>
+          <span class="stats-total-expense">− <%= fmtAmount(totalPlannedExpense) %></span>
+        </div>
+      </div>
+
+      <% if (rows.length===0) { %>
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          Нет категорий
+        </div>
+        <% } else { %>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Категория</th>
+                  <th class="col-num">Запланировано</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (incomeRows.length> 0) { %>
+                  <tr class="stats-section-row">
+                    <td colspan="3" class="stats-section-label stats-section-label--income">Доходы</td>
+                  </tr>
+                  <% incomeRows.forEach(r=> { %>
+                    <tr class="tr-clickable" data-open-modal="planning" data-category-id="<%= r.category_id %>"
+                      data-category-name="<%= r.category_name %>" data-planning-id="<%= r.planning_id || '' %>"
+                      data-planning-amount="<%= r.planned %>" data-planning-note="<%= r.planning_note || '' %>"
+                      data-planning-month="<%= month %>" data-planning-year="<%= year %>">
+                      <td class="col-cat">
+                        <%= r.category_name %>
+                      </td>
+                      <td class="col-amount col-num stats-income-amount">
+                        <% if (r.planned> 0) { %>+ <%= fmtAmount(r.planned) %>
+                            <% } else { %><span class="amount-zero">Не задан</span>
+                              <% } %>
+                      </td>
+                      <td class="col-action">
+                        <% if (r.planning_id) { %>
+                          <button class="btn-delete" type="button" onclick="event.stopPropagation()"
+                            hx-delete="/api/transaction-planning/<%= r.planning_id %>" hx-swap="none"
+                            hx-confirm="Удалить план?">✕</button>
+                          <% } %>
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } %>
+                        <% if (expenseRows.length> 0) { %>
+                          <tr class="stats-section-row">
+                            <td colspan="3" class="stats-section-label stats-section-label--expense">Расходы</td>
+                          </tr>
+                          <% expenseRows.forEach(r=> { %>
+                            <tr class="tr-clickable" data-open-modal="planning" data-category-id="<%= r.category_id %>"
+                              data-category-name="<%= r.category_name %>" data-planning-id="<%= r.planning_id || '' %>"
+                              data-planning-amount="<%= r.planned %>" data-planning-note="<%= r.planning_note || '' %>"
+                              data-planning-month="<%= month %>" data-planning-year="<%= year %>">
+                              <td class="col-cat">
+                                <%= r.category_name %>
+                              </td>
+                              <td class="col-amount col-num stats-expense-amount">
+                                <% if (r.planned> 0) { %>− <%= fmtAmount(r.planned) %>
+                                    <% } else { %><span class="amount-zero">Не задан</span>
+                                      <% } %>
+                              </td>
+                              <td class="col-action">
+                                <% if (r.planning_id) { %>
+                                  <button class="btn-delete" type="button" onclick="event.stopPropagation()"
+                                    hx-delete="/api/transaction-planning/<%= r.planning_id %>" hx-swap="none"
+                                    hx-confirm="Удалить план?">✕</button>
+                                  <% } %>
+                              </td>
+                            </tr>
+                            <% }) %>
+                              <% } %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+
+  </div>
+
+  <!-- ===== SUMMARY ===== -->
+  <% if (rows.length> 0) { %>
+    <% const totalDiffIncome=totalActualIncome - totalPlannedIncome; const totalDiffExpense=totalActualExpense -
+      totalPlannedExpense; %>
+      <div class="table-card stats-summary-card">
+        <div class="table-head">
+          <span class="table-title">Сводка</span>
+          <div class="table-head-right stats-totals">
+            <span class="<%= totalDiffIncome  > 0 ? 'diff-good' : 'diff-bad' %>">
+              Доходы: <%= totalDiffIncome>= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(totalDiffIncome)) %>
+            </span>
+            <span class="stats-total-sep">&nbsp;·&nbsp;</span>
+            <span class="<%= totalDiffExpense > 0 ? 'diff-good' : 'diff-bad' %>">
+              Расходы: <%= totalDiffExpense>= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(totalDiffExpense)) %>
+            </span>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Категория</th>
+                <th class="col-num">Факт</th>
+                <th class="col-num">План</th>
+                <th class="col-num">Разница</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (incomeRows.length> 0) { %>
+                <tr class="stats-section-row">
+                  <td colspan="4" class="stats-section-label stats-section-label--income">Доходы</td>
+                </tr>
+                <% incomeRows.forEach(r=> { %>
+                  <% const diff=r.actual - r.planned; %>
+                    <tr>
+                      <td class="col-cat">
+                        <%= r.category_name %>
+                      </td>
+                      <td class="col-amount col-num stats-income-amount">
+                        <%= r.actual> 0 ? '+ ' + fmtAmount(r.actual) : '—' %>
+                      </td>
+                      <td class="col-amount col-num">
+                        <%= r.planned> 0 ? fmtAmount(r.planned) : '—' %>
+                      </td>
+                      <td class="col-amount col-num <%= diff > 0 ? 'diff-good' : 'diff-bad' %>">
+                        <%= diff>= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(diff)) %>
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } %>
+                        <% if (expenseRows.length> 0) { %>
+                          <tr class="stats-section-row">
+                            <td colspan="4" class="stats-section-label stats-section-label--expense">Расходы</td>
+                          </tr>
+                          <% expenseRows.forEach(r=> { %>
+                            <% const diff=r.actual - r.planned; %>
+                              <tr>
+                                <td class="col-cat">
+                                  <%= r.category_name %>
+                                </td>
+                                <td class="col-amount col-num stats-expense-amount">
+                                  <%= r.actual> 0 ? '− ' + fmtAmount(r.actual) : '—' %>
+                                </td>
+                                <td class="col-amount col-num">
+                                  <%= r.planned> 0 ? fmtAmount(r.planned) : '—' %>
+                                </td>
+                                <td class="col-amount col-num <%= diff < 0 ? 'diff-good' : 'diff-bad' %>">
+                                  <%= diff<=0 ? '+' : '−' %>
+                                    <%= fmtAmount(Math.abs(diff)) %>
+                                </td>
+                              </tr>
+                              <% }) %>
+                                <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
       <% } %>
-    </div>
-  </div>
-
-</form>
-
-<!-- ===== TABLES ===== -->
-<div class="tables-grid">
-
-  <!-- ACTUAL -->
-  <div class="table-card stats-fact-card">
-    <div class="table-head">
-      <span class="table-title">Факт</span>
-      <div class="table-head-right stats-totals">
-        <span class="stats-total-income">+ <%= fmtAmount(totalActualIncome) %></span>
-        <span class="stats-total-sep">/</span>
-        <span class="stats-total-expense">− <%= fmtAmount(totalActualExpense) %></span>
-      </div>
-    </div>
-
-    <% if (rows.length === 0) { %>
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        Нет категорий
-      </div>
-    <% } else { %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Категория</th>
-              <th class="col-num">Сумма</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (incomeRows.length > 0) { %>
-              <tr class="stats-section-row">
-                <td colspan="2" class="stats-section-label stats-section-label--income">Доходы</td>
-              </tr>
-              <% incomeRows.forEach(r => { %>
-                <tr data-row-type="income">
-                  <td class="col-cat"><%= r.category_name %></td>
-                  <td class="col-amount col-num stats-income-amount">
-                    <% if (r.actual > 0) { %>+ <%= fmtAmount(r.actual) %><% } else { %><span class="amount-zero">—</span><% } %>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } %>
-            <% if (expenseRows.length > 0) { %>
-              <tr class="stats-section-row">
-                <td colspan="2" class="stats-section-label stats-section-label--expense">Расходы</td>
-              </tr>
-              <% expenseRows.forEach(r => { %>
-                <tr data-row-type="expense">
-                  <td class="col-cat"><%= r.category_name %></td>
-                  <td class="col-amount col-num stats-expense-amount">
-                    <% if (r.actual > 0) { %>− <%= fmtAmount(r.actual) %><% } else { %><span class="amount-zero">—</span><% } %>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
-    <% } %>
-  </div>
-
-  <!-- PLANNED -->
-  <div class="table-card stats-plan-card">
-    <div class="table-head">
-      <span class="table-title">План</span>
-      <div class="table-head-right stats-totals">
-        <span class="stats-total-income">+ <%= fmtAmount(totalPlannedIncome) %></span>
-        <span class="stats-total-sep">/</span>
-        <span class="stats-total-expense">− <%= fmtAmount(totalPlannedExpense) %></span>
-      </div>
-    </div>
-
-    <% if (rows.length === 0) { %>
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        Нет категорий
-      </div>
-    <% } else { %>
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Категория</th>
-              <th class="col-num">Запланировано</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (incomeRows.length > 0) { %>
-              <tr class="stats-section-row">
-                <td colspan="3" class="stats-section-label stats-section-label--income">Доходы</td>
-              </tr>
-              <% incomeRows.forEach(r => { %>
-                <tr class="tr-clickable"
-                    data-open-modal="planning"
-                    data-category-id="<%= r.category_id %>"
-                    data-category-name="<%= r.category_name %>"
-                    data-planning-id="<%= r.planning_id || '' %>"
-                    data-planning-amount="<%= r.planned %>"
-                    data-planning-note="<%= r.planning_note || '' %>"
-                    data-planning-month="<%= month %>"
-                    data-planning-year="<%= year %>">
-                  <td class="col-cat"><%= r.category_name %></td>
-                  <td class="col-amount col-num stats-income-amount">
-                    <% if (r.planned > 0) { %>+ <%= fmtAmount(r.planned) %><% } else { %><span class="amount-zero">Не задан</span><% } %>
-                  </td>
-                  <td class="col-action">
-                    <% if (r.planning_id) { %>
-                      <button class="btn-delete" type="button" onclick="event.stopPropagation()"
-                        hx-delete="/api/transaction-planning/<%= r.planning_id %>"
-                        hx-swap="none"
-                        hx-confirm="Удалить план?">✕</button>
-                    <% } %>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } %>
-            <% if (expenseRows.length > 0) { %>
-              <tr class="stats-section-row">
-                <td colspan="3" class="stats-section-label stats-section-label--expense">Расходы</td>
-              </tr>
-              <% expenseRows.forEach(r => { %>
-                <tr class="tr-clickable"
-                    data-open-modal="planning"
-                    data-category-id="<%= r.category_id %>"
-                    data-category-name="<%= r.category_name %>"
-                    data-planning-id="<%= r.planning_id || '' %>"
-                    data-planning-amount="<%= r.planned %>"
-                    data-planning-note="<%= r.planning_note || '' %>"
-                    data-planning-month="<%= month %>"
-                    data-planning-year="<%= year %>">
-                  <td class="col-cat"><%= r.category_name %></td>
-                  <td class="col-amount col-num stats-expense-amount">
-                    <% if (r.planned > 0) { %>− <%= fmtAmount(r.planned) %><% } else { %><span class="amount-zero">Не задан</span><% } %>
-                  </td>
-                  <td class="col-action">
-                    <% if (r.planning_id) { %>
-                      <button class="btn-delete" type="button" onclick="event.stopPropagation()"
-                        hx-delete="/api/transaction-planning/<%= r.planning_id %>"
-                        hx-swap="none"
-                        hx-confirm="Удалить план?">✕</button>
-                    <% } %>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
-    <% } %>
-  </div>
-
-</div>
-
-<!-- ===== SUMMARY ===== -->
-<% if (rows.length > 0) { %>
-<%
-  const totalDiffIncome  = totalActualIncome  - totalPlannedIncome;
-  const totalDiffExpense = totalActualExpense - totalPlannedExpense;
-%>
-<div class="table-card stats-summary-card">
-  <div class="table-head">
-    <span class="table-title">Сводка</span>
-    <div class="table-head-right stats-totals">
-      <span class="<%= totalDiffIncome  > 0 ? 'diff-good' : 'diff-bad' %>">
-        Доходы: <%= totalDiffIncome >= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(totalDiffIncome)) %>
-      </span>
-      <span class="stats-total-sep">&nbsp;·&nbsp;</span>
-      <span class="<%= totalDiffExpense > 0 ? 'diff-good' : 'diff-bad' %>">
-        Расходы: <%= totalDiffExpense >= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(totalDiffExpense)) %>
-      </span>
-    </div>
-  </div>
-
-  <div class="table-scroll">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Категория</th>
-          <th class="col-num">Факт</th>
-          <th class="col-num">План</th>
-          <th class="col-num">Разница</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (incomeRows.length > 0) { %>
-          <tr class="stats-section-row">
-            <td colspan="4" class="stats-section-label stats-section-label--income">Доходы</td>
-          </tr>
-          <% incomeRows.forEach(r => { %>
-            <% const diff = r.actual - r.planned; %>
-            <tr>
-              <td class="col-cat"><%= r.category_name %></td>
-              <td class="col-amount col-num stats-income-amount"><%= r.actual > 0 ? '+ ' + fmtAmount(r.actual) : '—' %></td>
-              <td class="col-amount col-num"><%= r.planned > 0 ? fmtAmount(r.planned) : '—' %></td>
-              <td class="col-amount col-num <%= diff > 0 ? 'diff-good' : 'diff-bad' %>">
-                <%= diff >= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(diff)) %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } %>
-        <% if (expenseRows.length > 0) { %>
-          <tr class="stats-section-row">
-            <td colspan="4" class="stats-section-label stats-section-label--expense">Расходы</td>
-          </tr>
-          <% expenseRows.forEach(r => { %>
-            <% const diff = r.actual - r.planned; %>
-            <tr>
-              <td class="col-cat"><%= r.category_name %></td>
-              <td class="col-amount col-num stats-expense-amount"><%= r.actual > 0 ? '− ' + fmtAmount(r.actual) : '—' %></td>
-              <td class="col-amount col-num"><%= r.planned > 0 ? fmtAmount(r.planned) : '—' %></td>
-              <td class="col-amount col-num <%= diff > 0 ? 'diff-good' : 'diff-bad' %>">
-                <%= diff >= 0 ? '+' : '−' %> <%= fmtAmount(Math.abs(diff)) %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } %>
-      </tbody>
-    </table>
-  </div>
-</div>
-<% } %>
