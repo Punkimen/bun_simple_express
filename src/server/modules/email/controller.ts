@@ -18,14 +18,15 @@ class SendEmailController {
     return res;
   };
 
-  sendMessage = async () => {
+  sendMessage = async (toArr: String[], link: string) => {
+    const to = toArr.join(", ");
     try {
       const info = await this.transporter.sendMail({
-        from: `"Example Team" <${process.env.SMTP_EMAIL}>`,
-        to: "punkimen666@gmail.com, punkiment@yandex.ru",
-        subject: "Hello",
-        text: "Hello world",
-        html: "<b>Hello world!</b>",
+        from: `"Budjet App" <noreply@onmi.io>`,
+        to,
+        subject: "Reset Password",
+        text: "Reset password",
+        html: `<a href=${link}>Перейдите по ссылке для сброса пароля!</b>`,
       });
       console.log({ info });
     } catch (e) {

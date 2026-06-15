@@ -80,6 +80,13 @@ class Users {
     await authController.logout(refreshToken);
   }
 
+  async resetPassword(email: string) {
+    const isHasUser = await prisma.user.findUnique({where: {email}})
+    if(!isHasUser){
+      throw new BadRequestError("User with this email not found");
+    }
+  }
+
   async deleteUser(userId: string) {
     await prisma.user.delete({ where: { id: userId } });
   }
