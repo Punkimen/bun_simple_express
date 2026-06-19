@@ -92,7 +92,7 @@ export const initUsersRoutes = (app: AppMethods) => {
   app.methodPost<{ email: string }>("/api/password-reset", async (req) => {
     const { email } = await req.json();
     const url = await userController.resetPasswordUrl(email);
-    sendEmailController.sendMessage([email], url);
+    await sendEmailController.sendMessage([email], url);
     return new Response(null, { headers: { Location: url } });
   });
 

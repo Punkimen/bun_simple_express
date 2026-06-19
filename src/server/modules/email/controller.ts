@@ -30,7 +30,8 @@ class SendEmailController {
       });
       console.log({ info });
     } catch (e) {
-      throw new AppError(e instanceof Error ? e.message : String(e));
+      console.error("sendMail failed:", e instanceof Error ? e.message : e);
+      throw new AppError("error from ");
     }
   };
 }
