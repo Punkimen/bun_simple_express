@@ -20,10 +20,14 @@ export const authMiddleware: MiddlewareCallback = async (req, res, next) => {
   const isPublicRoute =
     path === "/login" ||
     path === "/register" ||
+    path === "/forgot-password" ||
     path === "/api/login" ||
     path === "/api/register" ||
     path === "/api/logout" ||
+    path === "/api/password-reset" ||
     path === "/api/getGoogleOauth" ||
+    path === "/api/reset-password" ||
+    path === "/reset-password" ||
     path.startsWith("/auth/google/callback") ||
     path.startsWith("/public");
 

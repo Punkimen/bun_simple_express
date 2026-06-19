@@ -803,6 +803,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: 0 4px 14px var(--primary-glow);
 }
 
+.login-forgot {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.login-forgot:hover {
+  color: var(--primary);
+}
+
 .login-error {
   color: #f87171;
   font-size: 0.8125rem;

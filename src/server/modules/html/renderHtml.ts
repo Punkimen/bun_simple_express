@@ -6,6 +6,13 @@ import { prisma } from "../../prisma/db";
 export const renderHtml = async (app: AppMethods) => {
   app.methodHtml("/login", () => renderPage("login"));
 
+  app.methodHtml("/forgot-password", () => renderPage("forgot-password"));
+
+  app.methodHtml("/reset-password", (req) => {
+    const token = new URL(req.url).searchParams.get("token") ?? "";
+    return renderPage("reset-password", { token });
+  });
+
   app.methodHtml("/home", async (req) => {
     const ctx = getRequestContext(req);
     const user = ctx?.userId
