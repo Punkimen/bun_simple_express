@@ -3,6 +3,7 @@ import { passwordController } from "../auth/libs/passwordHasher";
 import { BadRequestError, UnauthorizedError } from "../../utils/error";
 import type { CookieMap } from "bun";
 import { authController } from "../auth/controller";
+import { SignJWT, jwtVerify } from "jose";
 
 class Users {
   async createUser(name: string, login: string, password: string) {
@@ -60,9 +61,9 @@ class Users {
     if (!user) {
       throw new BadRequestError("user not found");
     }
-    
-    if(!user.password){
-      throw new BadRequestError("it`s oAuth accaunt")
+
+    if (!user.password) {
+      throw new BadRequestError("it`s oAuth accaunt");
     }
 
     const validPass = await passwordController.verify(oldPass, user.password);
@@ -78,6 +79,43 @@ class Users {
     });
 
     await authController.logout(refreshToken);
+  }
+
+  async resetPasswordUrl(email: string): Promise<string> {
+    const isHasUser = await prisma.user.findUnique({ where: { email } });
+    if (!isHasUser) {
+      throw new BadRequestError("User with this email not found");
+    }
+
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const token = await new SignJWT({ email, passwordHash: isHasUser.password })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("15m")
+      .sign(secret);
+
+    const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+    return `${baseUrl}/reset-password?token=${token}`;
+  }
+
+  async confirmResetPassword(token: string, newPassword: string) {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const { payload } = await jwtVerify(token, secret);
+    const email = payload.email as string;
+    const passwordHash = payload.passwordHash as string | null;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) throw new BadRequestError("User not found");
+
+    if (user.password !== passwordHash) {
+      throw new BadRequestError("Reset link has already been used");
+    }
+
+    const hashPass = await passwordController.hash(newPassword);
+    await prisma.user.update({
+      where: { email },
+      data: { password: hashPass },
+    });
   }
 
   async deleteUser(userId: string) {

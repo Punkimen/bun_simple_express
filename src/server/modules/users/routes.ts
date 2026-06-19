@@ -3,6 +3,7 @@ import { userController } from "./controller";
 import { BadRequestError, UnauthorizedError } from "../../utils/error";
 import { authController } from "../auth/controller";
 import { getUserId } from "../../utils/getUserId";
+import { sendEmailController } from "../email/controller";
 
 export const initUsersRoutes = (app: AppMethods) => {
   app.methodPost<{
@@ -88,6 +89,29 @@ export const initUsersRoutes = (app: AppMethods) => {
     });
   });
 
+  app.methodPost<{ email: string }>("/api/password-reset", async (req) => {
+    const { email } = await req.json();
+    const url = await userController.resetPasswordUrl(email);
+    sendEmailController.sendMessage([email], url);
+    return new Response(null, { headers: { Location: url } });
+  });
+
+  app.methodPost<{
+    token: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>("/api/reset-password", async (req) => {
+    const { token, newPassword, confirmPassword } = await req.json();
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestError("Пароли не совпадают");
+    }
+    await userController.confirmResetPassword(token, newPassword);
+    return new Response(null, {
+      status: 200,
+      headers: { "HX-Redirect": "/login" },
+    });
+  });
+
   app.methodDelete("/api/user/delete", async (req) => {
     const userId = getUserId(req);
 
@@ -97,8 +121,16 @@ export const initUsersRoutes = (app: AppMethods) => {
 
     await userController.deleteUser(userId);
 
-    req.cookies.set("access_token", "", { httpOnly: true, path: "/", maxAge: 0 });
-    req.cookies.set("refresh_token", "", { httpOnly: true, path: "/", maxAge: 0 });
+    req.cookies.set("access_token", "", {
+      httpOnly: true,
+      path: "/",
+      maxAge: 0,
+    });
+    req.cookies.set("refresh_token", "", {
+      httpOnly: true,
+      path: "/",
+      maxAge: 0,
+    });
 
     return new Response(null, {
       status: 200,
