@@ -1,6 +1,7 @@
 # budget
 
 Персональный трекер бюджета на Bun + EJS + PostgreSQL.
+Ссылка на проект - https://punkimenbudjet.online/
 
 ## Установка зависимостей
 
