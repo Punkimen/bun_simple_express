@@ -2,6 +2,46 @@
 
 let _pendingCategoryId = null;
 let _initialMonthSynced = false;
+let _keepCategoryManagerOpen = false;
+let _clickableHintTimeout = null;
+
+const CLICKABLE_HINT_STORAGE_KEY = "isShowClickableHint";
+
+function dismissClickableHint() {
+  const hint = document.querySelector(".tr-clickable-hint");
+  if (hint) {
+    hint.remove();
+    localStorage.setItem(CLICKABLE_HINT_STORAGE_KEY, "true");
+  }
+  if (_clickableHintTimeout) {
+    clearTimeout(_clickableHintTimeout);
+    _clickableHintTimeout = null;
+  }
+}
+
+function showClickableHint() {
+  if (localStorage.getItem(CLICKABLE_HINT_STORAGE_KEY)) return;
+  if (document.querySelector(".tr-clickable-hint")) return;
+
+  const row = document.querySelector("#statistics-container .tr-clickable");
+  const anchor = row?.querySelector(".col-cat");
+  if (!anchor) return;
+
+  if (_clickableHintTimeout) clearTimeout(_clickableHintTimeout);
+  const anchorRect = anchor.getBoundingClientRect();
+
+  const hint = document.createElement("div");
+  hint.className = "tr-clickable-hint";
+  hint.innerHTML = `
+    <span>Кликайте чтобы редактировать</span>
+    <button type="button" data-clickable-hint-close aria-label="Закрыть подсказку">×</button>
+  `;
+  hint.style.top = `${anchorRect.bottom + 6}px`;
+  hint.style.left = `${Math.max(8, Math.min(anchorRect.left, window.innerWidth - 228))}px`;
+  document.body.appendChild(hint);
+
+  _clickableHintTimeout = setTimeout(dismissClickableHint, 15000);
+}
 
 function getDefaultDate() {
   return (
@@ -78,10 +118,26 @@ document.addEventListener("htmx:afterSwap", (e) => {
     _pendingCategoryId = null;
   }
 
+  if (e.detail.target.id === "category-list" && _keepCategoryManagerOpen) {
+    const list = e.detail.target.querySelector(".category-manager-list");
+    const toggle = e.detail.target.querySelector(
+      "[data-category-manager-toggle]",
+    );
+    if (list && toggle) {
+      list.hidden = false;
+      toggle.setAttribute("aria-expanded", "true");
+    }
+    _keepCategoryManagerOpen = false;
+  }
+
   if (e.detail.target.id === "transactions-container" && !_initialMonthSynced) {
     _initialMonthSynced = true;
     const savedDate = localStorage.getItem("lastTransactionDate");
     if (savedDate) syncMonthFilter(savedDate);
+  }
+
+  if (e.detail.target.id === "statistics-container") {
+    showClickableHint();
   }
 
   if (
@@ -103,6 +159,15 @@ function applyFilters() {
 }
 
 document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-clickable-hint-close]")) {
+    dismissClickableHint();
+    return;
+  }
+
+  if (e.target.closest(".tr-clickable")) {
+    dismissClickableHint();
+  }
+
   // Open modal
   const openBtn = e.target.closest("[data-open-modal]");
   if (openBtn) {
@@ -242,6 +307,50 @@ document.addEventListener("click", (e) => {
     return;
   }
 
+  const categoryManagerToggle = e.target.closest("[data-category-manager-toggle]");
+  if (categoryManagerToggle) {
+    const list = document.getElementById("category-manager-list");
+    if (list) {
+      const isOpen = list.hasAttribute("hidden");
+      list.toggleAttribute("hidden", !isOpen);
+      categoryManagerToggle.setAttribute("aria-expanded", String(isOpen));
+    }
+    return;
+  }
+
+  const editCategoryBtn = e.target.closest("[data-edit-category]");
+  if (editCategoryBtn) {
+    const item = editCategoryBtn.closest("[data-category-item]");
+    const name = item?.querySelector(".category-manager-name");
+    const form = item?.querySelector(".category-manager-edit-form");
+    const actions = item?.querySelector(".category-manager-actions");
+    if (name && form && actions) {
+      name.hidden = true;
+      actions.hidden = true;
+      form.hidden = false;
+      const input = form.querySelector('input[name="name"]');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+    return;
+  }
+
+  const cancelCategoryEditBtn = e.target.closest("[data-cancel-category-edit]");
+  if (cancelCategoryEditBtn) {
+    const item = cancelCategoryEditBtn.closest("[data-category-item]");
+    const name = item?.querySelector(".category-manager-name");
+    const form = item?.querySelector(".category-manager-edit-form");
+    const actions = item?.querySelector(".category-manager-actions");
+    if (name && form && actions) {
+      form.hidden = true;
+      name.hidden = false;
+      actions.hidden = false;
+    }
+    return;
+  }
+
   // Apply category filter (main page)
   if (e.target.closest("[data-apply-categories]")) {
     const panel = document.getElementById("categories-panel");
@@ -328,6 +437,9 @@ function setupAmountValidation() {
 
 document.addEventListener("htmx:beforeRequest", (e) => {
   const elt = e.detail.elt;
+  if (elt?.matches?.(".category-manager-edit-form")) {
+    _keepCategoryManagerOpen = true;
+  }
   if (!elt || elt.id !== "transaction-form" || elt.hasAttribute("hx-put"))
     return;
   const dateInput = elt.querySelector('[name="date"]');
@@ -339,6 +451,7 @@ document.addEventListener("htmx:beforeRequest", (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   setupAmountValidation();
+  showClickableHint();
   const savedDate = localStorage.getItem("lastTransactionDate");
   if (savedDate) {
     const dateInput = document.querySelector('#transaction-form [name="date"]');

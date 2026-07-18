@@ -62,6 +62,12 @@ export const initCategoryRoutes = (app: AppMethods) => {
     const { id } = req.params;
     if (!id) throw new NotFoundError("id is not found");
     const { name } = await req.json();
-    return categoryController.updateNameCategory(id, userId, name);
+    const result = await categoryController.updateNameCategory(id, userId, name);
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "categoryChanged",
+      },
+    });
   });
 };
