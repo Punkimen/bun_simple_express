@@ -1,13 +1,48 @@
 <% if (data && data.length > 0) { %>
-  <div class="category-pills">
+  <div class="category-manager">
+    <button
+      type="button"
+      class="category-manager-toggle"
+      data-category-manager-toggle
+      aria-expanded="false"
+      aria-controls="category-manager-list"
+    >
+      Управление категориями
+      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </button>
+    <div id="category-manager-list" class="category-manager-list" hidden>
     <% data.forEach(cat => { %>
-      <span class="category-pill">
-        <span class="category-pill-name"><%= cat.name %></span>
-        <button type="button" class="category-pill-delete"
-                hx-delete="/api/category/<%= cat.id %>"
-                hx-swap="none"
-                hx-confirm="Удалить категорию «<%= cat.name %>»?">✕</button>
-      </span>
+      <div class="category-manager-item" data-category-item>
+        <span class="category-manager-name"><%= cat.name %></span>
+        <form class="category-manager-edit-form" hidden
+          hx-put="/api/category/<%= cat.id %>"
+          hx-ext="json-enc"
+          hx-swap="none">
+          <input type="text" name="name" value="<%= cat.name %>" required aria-label="Название категории">
+          <button type="submit" class="category-icon-button category-save-button" title="Сохранить" aria-label="Сохранить">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          </button>
+          <button type="button" class="category-icon-button" data-cancel-category-edit title="Отменить" aria-label="Отменить">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </form>
+        <div class="category-manager-actions">
+          <button type="button" class="category-icon-button" data-edit-category title="Редактировать" aria-label="Редактировать категорию">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+          </button>
+          <button type="button" class="category-icon-button category-delete-button"
+            hx-delete="/api/category/<%= cat.id %>"
+            hx-swap="none"
+            hx-confirm="Удалить категорию «<%= cat.name %>»?"
+            title="Удалить"
+            aria-label="Удалить категорию">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v5M14 11v5"></path></svg>
+          </button>
+        </div>
+      </div>
     <% }) %>
+    </div>
   </div>
 <% } %>

@@ -98,6 +98,12 @@ export const createApp = (): AppMethods => {
           message = error.message;
         }
 
+        const url = new URL(req.url);
+        console.error(
+          `[${new Date().toISOString()}] ${req.method} ${url.pathname} → ${status}: ${message}`,
+          error instanceof AppError ? "" : error,
+        );
+
         return new Response(JSON.stringify({ error: message }), {
           status,
           headers: { "Content-Type": "application/json" },
