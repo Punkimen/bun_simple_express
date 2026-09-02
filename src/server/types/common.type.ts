@@ -16,6 +16,7 @@ export type TCategory = {
   id: string;
   name: string;
   type: "income" | "expense";
+  sort?: number | null;
 };
 
 export type TTransactionPlanning = {

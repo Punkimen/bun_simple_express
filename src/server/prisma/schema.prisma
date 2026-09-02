@@ -49,6 +49,7 @@ model Category {
   id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                 String
   type                 String?
+  sort                 Int?
   transactions         Transaction[]
   user_id              String                @db.Uuid
   user                 User                  @relation(fields: [user_id], references: [id])
