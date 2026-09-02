@@ -1,6 +1,6 @@
 import { prisma } from "../../prisma/db";
 import type { TCategory } from "../../types/common.type";
-import { AppError } from "../../utils/error";
+import { AppError, BadRequestError } from "../../utils/error";
 import { renderHtmlPart } from "../../utils/renderPage";
 
 class Categories {
@@ -8,6 +8,11 @@ class Categories {
     try {
       const categories = await prisma.category.findMany({
         where: { user_id: userId, ...(type ? { type } : {}) },
+        orderBy: [
+          { sort: { sort: "asc", nulls: "last" } },
+          { name: "asc" },
+          { id: "asc" },
+        ],
       });
       return categories;
     } catch (error: any) {
@@ -62,6 +67,61 @@ class Categories {
       return result;
     } catch (error: any) {
       throw new AppError(error.message || "Failed to update category");
+    }
+  }
+
+  async changeSort(
+    categoryIds: string[],
+    type: TCategory["type"],
+    userId: string,
+  ) {
+    if (!Array.isArray(categoryIds)) {
+      throw new BadRequestError("categoryIds must be an array");
+    }
+    if (type !== "income" && type !== "expense") {
+      throw new BadRequestError("Invalid category type");
+    }
+    if (categoryIds.some((id) => typeof id !== "string" || !id)) {
+      throw new BadRequestError("Every category id must be a non-empty string");
+    }
+    if (new Set(categoryIds).size !== categoryIds.length) {
+      throw new BadRequestError("categoryIds must not contain duplicates");
+    }
+
+    try {
+      return await prisma.$transaction(async (tx) => {
+        const categories = await tx.category.findMany({
+          where: { user_id: userId, type },
+          select: { id: true },
+        });
+        const existingIds = new Set(categories.map((category) => category.id));
+
+        if (
+          categories.length !== categoryIds.length ||
+          categoryIds.some((id) => !existingIds.has(id))
+        ) {
+          throw new BadRequestError(
+            "categoryIds must contain all categories of the selected type",
+          );
+        }
+
+        await Promise.all(
+          categoryIds.map((id, sort) =>
+            tx.category.update({
+              where: { id, user_id: userId, type },
+              data: { sort },
+            }),
+          ),
+        );
+
+        return tx.category.findMany({
+          where: { user_id: userId, type },
+          orderBy: [{ sort: "asc" }, { name: "asc" }, { id: "asc" }],
+        });
+      });
+    } catch (error: any) {
+      if (error instanceof AppError) throw error;
+      throw new AppError(error.message || "Failed to change category sort");
     }
   }
 }

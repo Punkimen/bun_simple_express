@@ -57,6 +57,25 @@ export const initCategoryRoutes = (app: AppMethods) => {
     },
   );
 
+  app.methodPut<{
+    categoryIds: TCategory["id"][];
+    type: TCategory["type"];
+  }>("/api/category/sort", async (req) => {
+    const userId = getUserId(req);
+    const { categoryIds, type } = await req.json();
+    const result = await categoryController.changeSort(
+      categoryIds,
+      type,
+      userId,
+    );
+    return new Response(JSON.stringify(result), {
+      headers: {
+        "Content-Type": "application/json",
+        "HX-Trigger": "categoryChanged",
+      },
+    });
+  });
+
   app.methodPut<{ name: string }>("/api/category/:id", async (req) => {
     const userId = getUserId(req);
     const { id } = req.params;

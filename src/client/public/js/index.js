@@ -4,6 +4,9 @@ let _pendingCategoryId = null;
 let _initialMonthSynced = false;
 let _keepCategoryManagerOpen = false;
 let _clickableHintTimeout = null;
+let _categoryDragState = null;
+let _categorySortSaving = false;
+let _pendingCategorySortFocusId = null;
 
 const CLICKABLE_HINT_STORAGE_KEY = "isShowClickableHint";
 
@@ -128,6 +131,17 @@ document.addEventListener("htmx:afterSwap", (e) => {
       toggle.setAttribute("aria-expanded", "true");
     }
     _keepCategoryManagerOpen = false;
+  }
+
+  if (e.detail.target.id === "category-list" && _pendingCategorySortFocusId) {
+    const item = Array.from(
+      e.detail.target.querySelectorAll("[data-category-item]"),
+    ).find(
+      (categoryItem) =>
+        categoryItem.dataset.categoryId === _pendingCategorySortFocusId,
+    );
+    item?.querySelector("[data-category-drag-handle]")?.focus();
+    _pendingCategorySortFocusId = null;
   }
 
   if (e.detail.target.id === "transactions-container" && !_initialMonthSynced) {
@@ -389,6 +403,174 @@ document.addEventListener("click", (e) => {
     const statsPanel = document.getElementById("stats-categories-panel");
     if (statsPanel && statsPanel.style.display !== "none") statsPanel.style.display = "none";
   }
+});
+
+function getCategoryItems(list) {
+  return Array.from(list.children).filter((item) =>
+    item.matches("[data-category-item]"),
+  );
+}
+
+function getCategoryIds(list) {
+  return getCategoryItems(list).map((item) => item.dataset.categoryId);
+}
+
+function restoreCategoryItems(list, items) {
+  if (!list.isConnected) return;
+  items.forEach((item) => list.appendChild(item));
+}
+
+async function persistCategorySort(list, originalItems) {
+  const categoryIds = getCategoryIds(list);
+  const type = list.dataset.categoryType;
+  const focusedCategoryId = document.activeElement
+    ?.closest?.("[data-category-item]")
+    ?.dataset.categoryId;
+
+  if (!type || categoryIds.some((id) => !id)) {
+    restoreCategoryItems(list, originalItems);
+    window.alert("Не удалось определить категории для сортировки");
+    return;
+  }
+
+  _categorySortSaving = true;
+  list.classList.add("is-saving");
+  list.setAttribute("aria-busy", "true");
+
+  try {
+    const response = await fetch("/api/category/sort", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ categoryIds, type }),
+    });
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(result?.error || "Не удалось сохранить порядок категорий");
+    }
+
+    const categorySelect = document.getElementById("category-select");
+    _pendingCategoryId = categorySelect?.value || null;
+    _pendingCategorySortFocusId = focusedCategoryId || null;
+    _keepCategoryManagerOpen = true;
+    htmx.trigger(document.body, "categoryChanged");
+  } catch (error) {
+    restoreCategoryItems(list, originalItems);
+    window.alert(error.message || "Не удалось сохранить порядок категорий");
+  } finally {
+    _categorySortSaving = false;
+    if (list.isConnected) {
+      list.classList.remove("is-saving");
+      list.removeAttribute("aria-busy");
+    }
+  }
+}
+
+document.addEventListener("pointerdown", (e) => {
+  const handle = e.target.closest("[data-category-drag-handle]");
+  if (!handle || _categorySortSaving) return;
+  if (e.pointerType !== "touch" && e.button !== 0) return;
+
+  const item = handle.closest("[data-category-item]");
+  const list = item?.closest("[data-category-type]");
+  if (!item || !list || getCategoryItems(list).length < 2) return;
+
+  handle.focus();
+  handle.setPointerCapture(e.pointerId);
+  item.classList.add("is-dragging");
+  _categoryDragState = {
+    pointerId: e.pointerId,
+    handle,
+    item,
+    list,
+    originalItems: getCategoryItems(list),
+  };
+  e.preventDefault();
+});
+
+document.addEventListener(
+  "pointermove",
+  (e) => {
+    const state = _categoryDragState;
+    if (!state || state.pointerId !== e.pointerId) return;
+
+    e.preventDefault();
+    const pointedElement = document.elementFromPoint(e.clientX, e.clientY);
+    const targetItem = pointedElement?.closest?.("[data-category-item]");
+    if (
+      !targetItem ||
+      targetItem === state.item ||
+      targetItem.parentElement !== state.list
+    ) {
+      return;
+    }
+
+    const targetRect = targetItem.getBoundingClientRect();
+    const insertAfter = e.clientY > targetRect.top + targetRect.height / 2;
+    state.list.insertBefore(
+      state.item,
+      insertAfter ? targetItem.nextElementSibling : targetItem,
+    );
+  },
+  { passive: false },
+);
+
+function finishCategoryDrag(e, cancelled = false) {
+  const state = _categoryDragState;
+  if (!state || state.pointerId !== e.pointerId) return;
+
+  _categoryDragState = null;
+  state.item.classList.remove("is-dragging");
+  if (state.handle.hasPointerCapture(e.pointerId)) {
+    state.handle.releasePointerCapture(e.pointerId);
+  }
+
+  const listRect = state.list.getBoundingClientRect();
+  const releasedInside =
+    e.clientX >= listRect.left &&
+    e.clientX <= listRect.right &&
+    e.clientY >= listRect.top &&
+    e.clientY <= listRect.bottom;
+  const originalIds = state.originalItems.map((item) => item.dataset.categoryId);
+  const categoryIds = getCategoryIds(state.list);
+  const orderChanged = categoryIds.some((id, index) => id !== originalIds[index]);
+
+  if (cancelled || !releasedInside) {
+    restoreCategoryItems(state.list, state.originalItems);
+  } else if (orderChanged) {
+    void persistCategorySort(state.list, state.originalItems);
+  }
+}
+
+document.addEventListener("pointerup", (e) => finishCategoryDrag(e));
+document.addEventListener("pointercancel", (e) => finishCategoryDrag(e, true));
+
+document.addEventListener("keydown", (e) => {
+  const handle = e.target.closest("[data-category-drag-handle]");
+  if (
+    !handle ||
+    _categorySortSaving ||
+    (e.key !== "ArrowUp" && e.key !== "ArrowDown")
+  ) {
+    return;
+  }
+
+  const item = handle.closest("[data-category-item]");
+  const list = item?.closest("[data-category-type]");
+  if (!item || !list) return;
+
+  const sibling =
+    e.key === "ArrowUp" ? item.previousElementSibling : item.nextElementSibling;
+  if (!sibling?.matches("[data-category-item]")) return;
+
+  e.preventDefault();
+  const originalItems = getCategoryItems(list);
+  if (e.key === "ArrowUp") {
+    list.insertBefore(item, sibling);
+  } else {
+    list.insertBefore(sibling, item);
+  }
+  void persistCategorySort(list, originalItems);
 });
 
 const AMOUNT_MAX = 99999999.99;

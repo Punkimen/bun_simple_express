@@ -12,9 +12,10 @@
         <path d="m6 9 6 6 6-6"></path>
       </svg>
     </button>
-    <div id="category-manager-list" class="category-manager-list" hidden>
+    <div id="category-manager-list" class="category-manager-list"
+      data-category-type="<%= data[0].type %>" hidden>
     <% data.forEach(cat => { %>
-      <div class="category-manager-item" data-category-item>
+      <div class="category-manager-item" data-category-item data-category-id="<%= cat.id %>">
         <span class="category-manager-name"><%= cat.name %></span>
         <form class="category-manager-edit-form" hidden
           hx-put="/api/category/<%= cat.id %>"
@@ -29,6 +30,17 @@
           </button>
         </form>
         <div class="category-manager-actions">
+          <button type="button" class="category-icon-button category-drag-handle"
+            data-category-drag-handle
+            title="Изменить порядок"
+            aria-label="Изменить порядок категории <%= cat.name %>"
+            aria-keyshortcuts="ArrowUp ArrowDown">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="9" cy="5" r="1.5"></circle><circle cx="15" cy="5" r="1.5"></circle>
+              <circle cx="9" cy="12" r="1.5"></circle><circle cx="15" cy="12" r="1.5"></circle>
+              <circle cx="9" cy="19" r="1.5"></circle><circle cx="15" cy="19" r="1.5"></circle>
+            </svg>
+          </button>
           <button type="button" class="category-icon-button" data-edit-category title="Редактировать" aria-label="Редактировать категорию">
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
           </button>

@@ -314,6 +314,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--surface-2);
 }
 
+.category-drag-handle {
+  cursor: grab;
+  touch-action: none;
+}
+
+.category-drag-handle:active,
+.category-manager-item.is-dragging .category-drag-handle {
+  cursor: grabbing;
+}
+
+.category-manager-item.is-dragging {
+  background: var(--surface-2);
+  opacity: 0.65;
+}
+
+.category-manager-list.is-saving .category-drag-handle {
+  cursor: wait;
+  pointer-events: none;
+}
+
 .category-delete-button:hover {
   color: var(--expense);
   background: var(--expense-bg);
